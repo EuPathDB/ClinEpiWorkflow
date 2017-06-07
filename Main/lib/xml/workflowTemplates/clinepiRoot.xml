@@ -1,0 +1,53 @@
+<workflowGraph name="">
+  <param name="projectName"/>
+  <param name="projectVersionForWebsiteFiles"/>
+ 
+
+  <constant name="relativeWebServicesDir">webServices/$$projectName$$/release-$$projectVersionForWebsiteFiles$$</constant>
+  <constant name="relativeDownloadSiteDir">downloadSite/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
+  <constant name="relativeAuxiliaryDir">auxiliary/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
+
+
+<!--  <constant name="globalDataDir">global</constant>-->
+
+  <globalSubgraph name="clinepiGlobal" xmlFile="clinepiGlobal.xml">
+    <paramValue name="globalDatasetLoaderXmlFile">clinepiGlobal.xml</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+  </globalSubgraph>
+  
+
+  <step name="makeProjectReleaseDownloadDir" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitSiteDir">
+    <paramValue name="relativeDir">$$relativeDownloadSiteDir$$</paramValue>
+    <dependsGlobal name="initUserGroupProject"/>
+  </step>
+  
+  <step name="makeProjectReleaseWebServicesDir" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitSiteDir">
+    <paramValue name="relativeDir">$$relativeWebServicesDir$$</paramValue>
+    <dependsGlobal name="initUserGroupProject"/>
+  </step>
+  
+  <step name="makeProjectReleaseAuxiliaryDir" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitSiteDir">
+    <paramValue name="relativeDir">$$relativeAuxiliaryDir$$</paramValue>
+    <dependsGlobal name="initUserGroupProject"/>
+  </step>
+
+
+  <datasetTemplate class="ISASimpleClinEpi">
+    <prop name="projectName"/>
+    <prop name="subProjectName"/>
+    <prop name="groupName"/>
+    <prop name="studyName"/>
+    <prop name="version"/>
+
+    
+    <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
+      <paramValue name="parentDataDir"></paramValue>
+      <dependsGlobal name="eupathCuratedOntologies"/>
+    </subgraph>
+  </datasetTemplate>
+
+
+</workflowGraph>
+

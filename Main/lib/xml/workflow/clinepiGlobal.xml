@@ -1,0 +1,55 @@
+<workflowGraph name="clinepiGlobal">
+  <param name="globalDatasetLoaderXmlFile"/>
+  <param name="projectName"/>
+
+  <constant name="dataDir">global</constant>
+
+  <step name="makeDataDir" stepClass="ReFlow::StepClasses::MakeDataDir">
+    <paramValue name="dataDir">$$dataDir$$</paramValue>
+  </step>
+
+  <!-- we want all steps in the flow to depend on this one because it validates the project name and version -->
+  <step name="initUserGroupProject" 
+	stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitUserGroupProject">
+    <paramValue name="projectName">$$projectName$$</paramValue>
+  </step>
+
+
+ <subgraph name="Ontology_Relationship_Types_RSRC" xmlFile="loadDataset.xml">
+    <paramValue name="datasetName">Ontology_Relationship_Types_RSRC</paramValue>
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="initUserGroupProject"/>
+  </subgraph>
+
+<!--
+  <subgraph name="oboOntologies" xmlFile="generated/clinepiGlobal/oboOntologies.xml">
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="Ontology_Relationship_Types_RSRC"/>
+  </subgraph>
+-->
+
+
+  <subgraph name="EuPath_Ontology_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
+    <paramValue name="datasetName">OntologyTerm_EuPath_RSRC</paramValue>
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="Ontology_Relationship_Types_RSRC"/>
+  </subgraph>
+
+
+  <subgraph name="eupathCuratedOntologies" xmlFile="generated/clinepiGlobal/eupathCuratedOntologies.xml">
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="Ontology_Relationship_Types_RSRC"/>
+    <depends name="EuPath_Ontology_RSRC"/>
+  </subgraph>
+
+
+
+</workflowGraph>
+
+ 
+
+
