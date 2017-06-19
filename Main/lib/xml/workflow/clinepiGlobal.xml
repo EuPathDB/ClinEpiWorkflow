@@ -39,6 +39,15 @@
   </subgraph>
 
 
+
+  <subgraph name="oboOntologies" xmlFile="generated/clinepiGlobal/oboOntologies.xml" excludeIfXmlFileDoesNotExist="true">
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir"></paramValue>
+    <depends name="EuPath_Ontology_RSRC"/>
+    <depends name="Ontology_Relationship_Types_RSRC"/>
+  </subgraph>
+
+
   <subgraph name="eupathCuratedOntologies" xmlFile="generated/clinepiGlobal/eupathCuratedOntologies.xml">
     <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>

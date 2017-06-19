@@ -44,6 +44,7 @@
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
+      <dependsGlobal name="oboOntologies"/>
       <dependsGlobal name="eupathCuratedOntologies"/>
     </subgraph>
   </datasetTemplate>
