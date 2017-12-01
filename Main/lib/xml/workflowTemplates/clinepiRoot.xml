@@ -42,11 +42,19 @@
     
     <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${subProjectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
       <dependsGlobal name="oboOntologies"/>
       <dependsGlobal name="eupathCuratedOntologies"/>
     </subgraph>
+
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="tables">SampleId,PANRecord,PANResults,PANIO,PANExtDbRls,InferredParams,PANParamValues,DefaultChars,Metadata,Ontology,Samples,PropertyTypes,TopValues</paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
+    </step>
+
   </datasetTemplate>
 
 
