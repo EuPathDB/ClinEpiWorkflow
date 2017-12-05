@@ -55,6 +55,15 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 
+
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeClinEpiShinyDatasetFiles">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="outputFileBaseName">shiny</paramValue>
+      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"/>
+    </step>
+
+
   </datasetTemplate>
 
 
