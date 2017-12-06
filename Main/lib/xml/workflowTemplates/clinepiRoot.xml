@@ -64,6 +64,18 @@
     </step>
 
 
+
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyWSFiles" 
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToWebServices">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="inputFileBaseName">shiny</paramValue>
+      <paramValue name="relativeWebServicesDir">$$relativeWebServicesDir$$</paramValue>
+      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
+    </step>
+
+
+
+
   </datasetTemplate>
 
 
