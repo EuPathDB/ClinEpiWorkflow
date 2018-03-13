@@ -32,12 +32,25 @@
   </step>
 
 
+<!-- TODO on next rebuild...
+  <datasetTemplate class="ClinEpiWebDisplay">
+    <prop name="projectName"/>
+     ...
+
+   load ontology dataset from svn
+-->
+
   <datasetTemplate class="ISASimpleClinEpi">
     <prop name="projectName"/>
     <prop name="subProjectName"/>
     <prop name="groupName"/>
     <prop name="studyName"/>
     <prop name="version"/>
+
+    <!-- TODO on next rebuild
+    <prop name="ontologyName"/>
+    -->
+
 
     
     <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
@@ -46,12 +59,16 @@
       <paramValue name="parentDataDir"></paramValue>
       <dependsGlobal name="oboOntologies"/>
       <dependsGlobal name="eupathCuratedOntologies"/>
+<!-- TODO on next rebuild...
+replace eupathCuratedOntologies with specific dependency for this dataset
+      <dependsGlobal name="ClinEpiWebDisplay_ontologyName_RSRC"/>
+-->
     </subgraph>
 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="tables">SampleId,PANRecord,PANResults,PANIO,PANExtDbRls,InferredParams,PANParamValues,DefaultChars,Metadata,Ontology,Samples,PropertyTypes,TopValues</paramValue>
+      <paramValue name="tables">SampleId,PANRecord,PANResults,PANIO,PANExtDbRls,InferredParams,PANParamValues,DefaultChars,Metadata,Ontology,Samples,PropertyType</paramValue>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 
@@ -71,12 +88,26 @@
       <paramValue name="inputFileBaseName">shiny</paramValue>
       <paramValue name="relativeWebServicesDir">$$relativeWebServicesDir$$</paramValue>
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
+      <!-- TODO on next full Rebuild
+      <depends name="makeProjectReleaseWebServicesDir"/>
+      -->
     </step>
 
 
 
 
   </datasetTemplate>
+
+
+
+<!-- TODO on next rebuild...
+  <datasetTemplate class="UPDATE_ClinEpiWebDisplay">
+    <prop name="projectName"/>
+     ...
+
+   load ontology dataset from svn
+-->
+
 
 
 </workflowGraph>
