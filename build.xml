@@ -21,6 +21,13 @@
       <property name="version" value="api-august-2006"/>
     </ant>
   </target>
+  <target name="ClinEpiData-Checkout" unless="ClinEpiData.present">
+    <ant target="defaultProjectCheckout" inheritAll="false">
+      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/ClinEpiData"/>
+      <property name="project" value="ClinEpiData"/>
+      <property name="version" value="api-august-2006"/>
+    </ant>
+  </target>
   
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
@@ -31,6 +38,12 @@
     <available file="../ApiCommonData" type="dir"  property="ApiCommonData.present" />
     <antcall target="ApiCommonData-Checkout"/>
   </target>
+  <target name="ClinEpiWorkflow-ChildCheckout">
+    <available file="../ClinEpiWorkflow" type="dir"  property="ClinEpiWorkflow.present" />
+    <antcall target="ClinEpiWorkflow-Checkout"/>
+    <available file="../ClinEpiData" type="dir"  property="ClinEpiData.present" />
+    <antcall target="ClinEpiData-Checkout"/>
+  </target>
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Update    oooooooooooooooooooooooooo -->
@@ -39,6 +52,7 @@
     <ant target="defaultProjectUpdate">
       <property name="project" value="ApiCommonWorkflow"/>
       <property name="project" value="ApiCommonData"/>
+      <property name="project" value="ClinEpiData"/>
     </ant>
   </target>
 
@@ -48,6 +62,7 @@
 
   <target name="ClinEpiWorkflow-Installation" depends="ApiCommonWorkflow-Installation,
                                                     ApiCommonData-Installation,
+                                                    ClinEpiData-Installation,
                                                     ClinEpiWorkflow/Main-Installation">
     <ant target="defaultProjectInstall"/>
   </target>  
