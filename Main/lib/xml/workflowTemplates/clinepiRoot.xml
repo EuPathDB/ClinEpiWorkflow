@@ -34,11 +34,12 @@
   <datasetTemplate class="WebDisplayOntologyClinEpi">
     <prop name="name"/>
     <prop name="version"/>
+    <prop name="projectName"/>
 
     <subgraph name="OntologyTerm_${name}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">OntologyTerm_${name}_RSRC</paramValue>
-      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
+      <paramValue name="parentDataDir"></paramValue>
       <dependsGlobal name="Ontology_Relationship_Types_RSRC"/>
     </subgraph>
   </datasetTemplate>
@@ -47,11 +48,12 @@
   <datasetTemplate class="UpdateWebDisplayOntologyClinEpi">
     <prop name="name"/>
     <prop name="version"/>
+    <prop name="projectName"/>
 
     <subgraph name="OntologyTerm_UPDATE_${name}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">OntologyTerm_INTERNAL_${name}_RSRC</paramValue>
-      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
+      <paramValue name="parentDataDir"></paramValue>
       <depends name="OntologyTerm_${name}_RSRC"/>
     </subgraph>
   </datasetTemplate>
@@ -66,7 +68,7 @@
     
     <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="datasetLoaderXmlFileName">${subProjectName}.xml</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
     </subgraph>
