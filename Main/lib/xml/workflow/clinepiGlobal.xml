@@ -22,6 +22,22 @@
     <depends name="initUserGroupProject"/>
   </subgraph>
 
+  <subgraph name="EuPath_Ontology_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
+    <paramValue name="datasetName">OntologyTerm_EuPath_RSRC</paramValue>
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="Ontology_Relationship_Types_RSRC"/>
+  </subgraph>
+
+  <subgraph name="UPDATE_EuPath_Ontology_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
+    <paramValue name="datasetName">OntologyTerm_INTERNAL_EuPath_RSRC</paramValue>
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <depends name="EuPath_Ontology_RSRC"/>
+  </subgraph>
+
+
+
 </workflowGraph>
 
  

@@ -71,6 +71,7 @@
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+      <dependsGlobal name="EuPath_Ontology_RSRC"/> <!-- use Update Eupath ontology class to avoid rerunning DONE ISASimple steps -->
     </subgraph>
 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
