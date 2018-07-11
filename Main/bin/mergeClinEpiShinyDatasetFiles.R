@@ -5,10 +5,10 @@ args <- commandArgs(TRUE)
 
 dataDir <- args[1]
 if (is.null(dataDir)) {
-  stop("Error: No directory provided for shiny files to merge!")
+  stop("No directory provided for shiny files to merge!")
 } else {
   if (!file.exists(dataDir)) {
-    stop("Error: Directory provided for shiny files does not exist!")
+    stop("Directory provided for shiny files does not exist!")
   }
 }
 baseFileName <- args[2]
@@ -27,14 +27,14 @@ if (any(grepl("participants", shinyFiles))) {
   prtcpnt_temp <- try(fread(shinyFiles[grepl("participants", shinyFiles)], na.strings = c("N/A", "na", "")))
 
  if (any(grepl("Error", prtcpnt_temp[1]))) {
-   stop("Error: Participant file unreadable!")
+   stop("Participant file unreadable!")
  } else {
    prtcpnt.file <- prtcpnt_temp
    names(prtcpnt.file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(prtcpnt.file)))
    names(prtcpnt.file)[names(prtcpnt.file) == 'SOURCE_ID'] <- 'Participant_Id'
  } 
 } else {
-  stop("Error: Participant file missing!")
+  stop("Participant file missing!")
 }
 
 masterDataTable <- prtcpnt.file
@@ -51,7 +51,7 @@ for (i in 1:length(shinyFiles)) {
     file <- file_temp
     names(file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(file)))
     names(file)[names(file) == 'SOURCE_ID'] <- 'Participant_Id'
-    if (grepl("observation", file)) {
+    if (grepl("observation", shinyFiles[i]) | grepl("obsevation", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Observation_Id'
     }
 
