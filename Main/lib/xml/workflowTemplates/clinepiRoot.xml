@@ -31,6 +31,38 @@
     <dependsGlobal name="initUserGroupProject"/>
   </step>
 
+
+  <datasetTemplate class="genericProfilesClinEpi">
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="technologyType"/>
+    <prop name="projectName"/>
+    
+    <subgraph name="${name}" xmlFile="loadDataset.xml">
+      <paramValue name="datasetName">Profile_${technologyType}_${name}_RSRC</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
+      <paramValue name="parentDataDir"></paramValue>
+      <depends name="makeDataDir"/>
+    </subgraph>
+    
+    <subgraph name="${name}_analyze_${technologyType}_profile" xmlFile="analyzeGenericProfileExperiment.xml">
+      <paramValue name="parentDataDir"></paramValue>
+      <paramValue name="experimentDatasetName">Profile_${technologyType}_${name}_RSRC</paramValue>
+      <paramValue name="experimentDatasetVersion">${version}</paramValue>
+      <paramValue name="hasTimeSeries">false</paramValue>
+      <paramValue name="organismAbbrev"></paramValue>
+      <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
+      <paramValue name="studyName">${technologyType} Study ${name}</paramValue>
+      <paramValue name="technologyType">${technologyType}</paramValue>
+      <depends name="${name}"/>
+      <depends name="makeProjectReleaseDownloadDir"/>
+      <dependsGlobal name="initUserGroupProject"/>
+    </subgraph>
+  </datasetTemplate>
+
+
+
+
   <datasetTemplate class="WebDisplayOntologyClinEpi">
     <prop name="name"/>
     <prop name="version"/>
