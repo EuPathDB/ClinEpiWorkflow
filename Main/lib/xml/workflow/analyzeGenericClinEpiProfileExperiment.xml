@@ -1,0 +1,62 @@
+<workflowGraph name="analyzeGenericClinEpiProfileExperiment.xml">
+  <param name="parentDataDir"/>
+  <param name="experimentDatasetName"/>
+  <param name="experimentDatasetVersion"/>
+  <param name="hasTimeSeries"/>
+  <param name="organismAbbrev"/>
+  <param name="relativeDownloadSiteDir"/>
+  <param name="studyName"/>
+  <param name="technologyType"/>
+	  
+    <constant name="dataDir">$$parentDataDir$$/$$experimentDatasetName$$</constant>
+
+
+ <step name="doTranscriptExpression" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::DoTranscriptExpression">
+    <paramValue name="analysisConfigFile">$$parentDataDir$$/$$experimentDatasetName$$/final/analysisConfig.xml</paramValue>
+    <paramValue name="inputDir">$$dataDir$$/final</paramValue>
+    <paramValue name="outputDir">$$dataDir$$/doTranscriptExpression</paramValue>
+    <paramValue name="geneProbeMappingTabFile"></paramValue>
+	<paramValue name="platformDirectory"></paramValue>
+	<paramValue name="expectCdfFile">false</paramValue>
+	<paramValue name="expectNdfFile">false</paramValue>
+    <paramValue name="passPlatformMappingFile">false</paramValue>
+    <paramValue name="technologyType">$$technologyType$$</paramValue>
+  </step>
+
+  <step name="loadStudyResultsFromConfig" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudyResults" stepLoadTypes="plugin">
+    <paramValue name="configFile">$$dataDir$$/doTranscriptExpression/insert_study_results_config.txt</paramValue>
+    <paramValue name="inputDir">$$dataDir$$/doTranscriptExpression</paramValue>
+    <paramValue name="extDbRlsSpec">$$experimentDatasetName$$|$$experimentDatasetVersion$$</paramValue>
+    <paramValue name="studyName">$$studyName$$</paramValue>
+    <depends name="doTranscriptExpression"/>
+  </step>
+
+<!-- Remove step which makes download files for generic profiles, redmine #22523 
+  <step name="copyExpressionProfilesToDownloadDir" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyExpressionProfilesToDownloadDir">
+    <paramValue name="configFile">$$dataDir$$/doTranscriptExpression/insert_study_results_config.txt</paramValue>
+    <paramValue name="copyFromDir">$$dataDir$$/doTranscriptExpression</paramValue>
+    <paramValue name="organismAbbrev">$$organismAbbrev$$</paramValue>
+    <paramValue name="relativeDir">$$relativeDownloadSiteDir$$</paramValue>
+    <paramValue name="experimentDatasetName">$$experimentDatasetName$$</paramValue>
+    <depends name="doTranscriptExpression"/>
+  </step>
+-->
+
+<!-- TODO:  This should be done in the tuning table
+  <step name="calculateExpressionStats" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CalculateExpressionStatsForTimeSeries" stepLoadTypes="plugin" includeIf="$$hasTimeSeries$$" undoRoot="loadExpressionProfilesFromConfig">
+    <paramValue name="extDbRlsSpec">$$experimentDatasetName$$|$$experimentDatasetVersion$$</paramValue>
+    <paramValue name="configFile">time_series_stats_config.txt</paramValue>
+    <paramValue name="doTranscriptExpressionDir">$$dataDir$$/doTranscriptExpression</paramValue>
+    <depends name="loadExpressionProfilesFromConfig"/>
+  </step>
+-->
+  
+   <step name="document-generic_profile"
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertAnalysisMethodInvocation">
+      <paramValue name="method">generic_profile_MTHD</paramValue>
+      <paramValue name="version">1.0</paramValue>
+      <paramValue name="parameters"></paramValue>
+      <depends name="doTranscriptExpression"/>
+    </step>
+  
+  </workflowGraph>

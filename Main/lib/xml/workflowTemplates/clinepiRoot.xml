@@ -42,10 +42,10 @@
       <paramValue name="datasetName">Profile_${technologyType}_${name}_RSRC</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
-      <depends name="makeDataDir"/>
+      <dependsGlobal name="initUserGroupProject"/>
     </subgraph>
     
-    <subgraph name="${name}_analyze_${technologyType}_profile" xmlFile="analyzeGenericProfileExperiment.xml">
+    <subgraph name="${name}_analyze_${technologyType}_profile" xmlFile="analyzeGenericClinEpiProfileExperiment.xml">
       <paramValue name="parentDataDir"></paramValue>
       <paramValue name="experimentDatasetName">Profile_${technologyType}_${name}_RSRC</paramValue>
       <paramValue name="experimentDatasetVersion">${version}</paramValue>
@@ -56,7 +56,6 @@
       <paramValue name="technologyType">${technologyType}</paramValue>
       <depends name="${name}"/>
       <depends name="makeProjectReleaseDownloadDir"/>
-      <dependsGlobal name="initUserGroupProject"/>
     </subgraph>
   </datasetTemplate>
 
