@@ -19,7 +19,7 @@ if (is.null(baseFileName)) {
 
 #merges all files matching dataDir/shiny_*.txt and removes any identical cols as needed
 
-shinyFiles <- list.files(dataDir, pattern=paste0("[", baseFileName, "_*.txt]"), full.names=TRUE)
+shinyFiles <- list.files(dataDir, pattern=baseFileName, full.names=TRUE)
 
 #check for prtcpnts file and start there since we merge files by 'Participant_Id'
 #could also require observations file the same way if we'd like
