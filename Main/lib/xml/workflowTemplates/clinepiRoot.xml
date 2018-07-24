@@ -128,6 +128,16 @@
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
       <depends name="makeProjectReleaseWebServicesDir"/>
     </step>
+
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyDownloadFiles" 
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue> 
+      <paramValue name="groupName">${groupName}</paramValue>
+      <paramValue name="inputFileBaseName">shiny_downloadDir</paramValue>
+      <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
+      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
+      <depends name="makeProjectReleaseDownloadDir"/>
+    </step>
   </datasetTemplate>
 
 </workflowGraph>

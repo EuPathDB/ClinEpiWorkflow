@@ -68,3 +68,14 @@ for (i in 1:length(shinyFiles)) {
 
 fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t', na="NA")
 
+#ask JohnB if he wants the ontology file in downloadDir also
+metadata.file <- fread(paste(dataDir, "/ontologyMetadata.txt"))
+names(metadata.file) <- tolower(names(metadata.file))
+downloadDataTable <- masterDataTable
+drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
+downloadDataTable <- downloadDataTable[, !drop, with=FALSE]
+names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$property[match(names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], metadata.file$source_id)], " [", names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], "]")
+
+#also updates column headers to lower case for metadata file
+fwrite(metadata.file, file.path(dataDir, "ontologyMetadata.txt"), sep = '\t', na = "NA")
+fwrite(downloadDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
