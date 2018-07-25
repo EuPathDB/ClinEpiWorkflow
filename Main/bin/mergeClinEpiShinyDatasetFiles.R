@@ -39,6 +39,8 @@ if (any(grepl("participants", shinyFiles))) {
 
 masterDataTable <- prtcpnt.file
 shinyFiles <- shinyFiles[!grepl("participants", shinyFiles)]
+#if masterDataTable already exists, ignore it
+shinyFiles <- shinyFiles[!grepl("masterDataTable", shinyFiles)]
 
 #consider using reduce rather than for loop here. may save time
 
