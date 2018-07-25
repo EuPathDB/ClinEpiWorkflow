@@ -71,6 +71,8 @@ for (i in 1:length(shinyFiles)) {
 fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t', na="NA")
 
 #ask JohnB if he wants the ontology file in downloadDir also
+metadata.temp <- fread(paste0(dataDir, "/ontologyMetadata.txt"))
+
 if (!any(grepl("Error", metadata.temp[1]))) {
   metadata.file <- metadata.temp
   names(metadata.file) <- tolower(names(metadata.file))
