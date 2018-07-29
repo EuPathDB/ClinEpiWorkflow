@@ -46,7 +46,7 @@ shinyFiles <- shinyFiles[!grepl("downloadDir", shinyFiles)]
 #consider using reduce rather than for loop here. may save time
 
 for (i in 1:length(shinyFiles)) {
-  file_temp <- try(fread(shinyFiles[i], na.strings = c("N/A", "na", "")))
+  file_temp <- try(fread(shinyFiles[i], quote="", na.strings = c("N/A", "na", "")))
 
   if (any(grepl("Error", file_temp[1]))) {
     message("Warning: ", shinyFiles[i], " unreadable... skipping.")
@@ -54,6 +54,7 @@ for (i in 1:length(shinyFiles)) {
     file <- file_temp
     names(file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(file)))
     names(file)[names(file) == 'SOURCE_ID'] <- 'Participant_Id'
+    names(file)[names(file) == 'OBSERVATION_ID'] <- 'Observation_Id'
     if (grepl("observation", shinyFiles[i]) | grepl("obsevation", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Observation_Id'
     }
@@ -61,9 +62,15 @@ for (i in 1:length(shinyFiles)) {
     if (!is.null(file)) {
       if (nrow(file) > 1) {
         #remove columns that would cause duplicate entries after merge
-        drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id'
-        file <- file[, !drop, with=FALSE]
-        masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
+        if (grepl("samples", shinyFiles[i])) {
+          drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Observation_Id'
+          file <- file[, !drop, with=FALSE] 
+          masterDataTable <- merge(masterDataTable, file, by = "Observation_Id")
+        } else {
+          drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id'
+          file <- file[, !drop, with=FALSE]
+          masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
+        }
       }
     }
   }
@@ -71,7 +78,7 @@ for (i in 1:length(shinyFiles)) {
 
 fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t', na="NA")
 
-#ask JohnB if he wants the ontology file in downloadDir also
+#and create shiny downloadable files
 metadata.temp <- fread(paste0(dataDir, "/ontologyMetadata.txt"))
 
 if (!any(grepl("Error", metadata.temp[1]))) {
