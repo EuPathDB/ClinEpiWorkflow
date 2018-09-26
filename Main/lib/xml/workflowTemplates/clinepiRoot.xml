@@ -7,7 +7,6 @@
   <constant name="relativeDownloadSiteDir">downloadSite/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
   <constant name="relativeAuxiliaryDir">auxiliary/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
 
-
 <!--  <constant name="globalDataDir">global</constant>-->
 
   <globalSubgraph name="clinepiGlobal" xmlFile="clinepiGlobal.xml">
@@ -117,6 +116,7 @@
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeClinEpiShinyDatasetFiles">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="outputFileBaseName">shiny</paramValue>
+      <paramValue name="owlFile">$GUS_HOME/ontology/release/production/${webDisplayOntologyName}.owl</paramValue>
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"/>
     </step>
 

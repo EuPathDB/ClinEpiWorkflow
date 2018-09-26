@@ -65,7 +65,8 @@ for (i in 1:length(shinyFiles)) {
         if (grepl("samples", shinyFiles[i])) {
           drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Observation_Id'
           file <- file[, !drop, with=FALSE] 
-          masterDataTable <- merge(masterDataTable, file, by = "Observation_Id")
+          #some obs may not have samples, so set all=T
+          masterDataTable <- merge(masterDataTable, file, by = "Observation_Id", all = TRUE)
         } else {
           drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id'
           file <- file[, !drop, with=FALSE]
@@ -80,16 +81,23 @@ fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t'
 
 #and create shiny downloadable files
 metadata.temp <- fread(paste0(dataDir, "/ontologyMetadata.txt"))
+dataDict.temp <- fread(paste0(dataDir, "/ontologyMapping.txt"))
 
 if (!any(grepl("Error", metadata.temp[1]))) {
-  metadata.file <- metadata.temp
-  names(metadata.file) <- tolower(names(metadata.file))
-  downloadDataTable <- masterDataTable
-  drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
-  downloadDataTable <- downloadDataTable[, !drop, with=FALSE]
-  names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$property[match(names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], metadata.file$source_id)], " [", names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], "]")
-  fwrite(metadata.file, file.path(dataDir, "ontologyMetadata.txt"), sep = '\t', na = "NA")
-  fwrite(downloadDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
+  if (!any(grepl("Error", dataDict.temp[1]))) {
+    metadata.file <- metadata.temp
+    dataDict.file <- dataDict.temp
+    names(metadata.file) <- tolower(names(metadata.file))
+    metadata.file <- merge(metadata.file, dataDict.file, by = "source_id")
+    downloadDataTable <- masterDataTable
+    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
+    downloadDataTable <- downloadDataTable[, !drop, with=FALSE]
+    names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$property[match(names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], metadata.file$source_id)], " [", names(downloadDataTable)[!names(downloadDataTable) %in% c('Participant_Id', 'Observation_Id')], "]")
+    fwrite(metadata.file, file.path(dataDir, "ontologyMetadata.txt"), sep = '\t', na = "NA")
+    fwrite(downloadDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
+  } else {
+    stop("Data Dictionary mapping file missing or unreadable. Cannot create download files!")
+  }
 } else {
   stop("Ontology file missing or unreadable. Cannot create download files!")
 }
