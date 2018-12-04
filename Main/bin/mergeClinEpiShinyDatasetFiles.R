@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 library(data.table)
+library(plyr)
 
 args <- commandArgs(TRUE)
 
@@ -53,7 +54,7 @@ if (any(grepl("participants", shinyFiles))) {
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    masterDataTable <- prtcpnt.file
-   names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$property[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
+   names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
     fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participant.txt"), sep='\t', na="NA")
  } 
 } else {
@@ -92,13 +93,17 @@ for (i in 1:length(shinyFiles)) {
         } else {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
           file <- file[, keep, with=FALSE]
-          masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
+          if (grepl("observation", shinyFiles[i]) & (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable))) {
+            masterDataTable <- rbind.fill(masterDataTable, file)
+          } else {
+            masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
+          } 
         }
 
         #also make a copy with updated col names for downloadSite dir
         drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
         file <- file[, !drop, with=FALSE]
-        names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$property[match(names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
+        names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
         fileName <- gsub("shiny_", "shiny_downloadDir_", shinyFiles[i])
         fwrite(file, fileName, sep='\t', na="NA") 
 
