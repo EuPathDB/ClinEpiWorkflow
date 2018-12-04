@@ -85,13 +85,13 @@ for (i in 1:length(shinyFiles)) {
       if (nrow(file) > 1) {
         #remove columns that would cause duplicate entries after merge
         if (grepl("samples", shinyFiles[i])) {
-          drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Observation_Id'
-          file <- file[, !drop, with=FALSE] 
+          keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Observation_Id')
+          file <- file[, keep, with=FALSE] 
           #some obs may not have samples, so set all=T
           masterDataTable <- merge(masterDataTable, file, by = "Observation_Id", all = TRUE)
         } else {
-          drop <- colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id'
-          file <- file[, !drop, with=FALSE]
+          keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
+          file <- file[, keep, with=FALSE]
           masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
         }
 
