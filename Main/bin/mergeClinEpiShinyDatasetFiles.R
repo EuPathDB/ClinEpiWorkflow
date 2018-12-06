@@ -28,7 +28,7 @@ if (!any(grepl("Error", metadata.temp[1]))) {
     metadata.file <- metadata.temp
     dataDict.file <- dataDict.temp
     names(metadata.file) <- tolower(names(metadata.file))
-    metadata.file <- merge(metadata.file, dataDict.file, by = "iri")
+    metadata.file <- merge(metadata.file, dataDict.file, by = "iri", all = TRUE)
     fwrite(metadata.file, file.path(dataDir, "shiny_downloadDir_ontologyMetadata.txt"), sep = '\t', na = "NA")
   } else {
     stop("Data Dictionary mapping file missing or unreadable. Cannot create download files!")
@@ -54,7 +54,7 @@ if (any(grepl("participants", shinyFiles))) {
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    masterDataTable <- prtcpnt.file
-   names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
+   names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], "]")
     fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participant.txt"), sep='\t', na="NA")
  } 
 } else {
