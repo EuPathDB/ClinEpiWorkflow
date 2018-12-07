@@ -81,6 +81,9 @@ for (i in 1:length(shinyFiles)) {
     if (grepl("observation", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Observation_Id'
     }
+    if (grepl("household", shinyFiles[i])) {
+      names(file)[names(file) == 'NAME'] <- 'Household_Id'
+    }
 
     if (!is.null(file)) {
       if (nrow(file) > 1) {
