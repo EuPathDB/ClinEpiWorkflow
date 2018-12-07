@@ -54,6 +54,7 @@ if (any(grepl("participants", shinyFiles))) {
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    masterDataTable <- prtcpnt.file
+   prtcpnt.back <- prtcpnt.file
    names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], "]")
     fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participant.txt"), sep='\t', na="NA")
  } 
@@ -97,6 +98,7 @@ for (i in 1:length(shinyFiles)) {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
           file <- file[, keep, with=FALSE]
           if (grepl("observation", shinyFiles[i]) & (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable))) {
+            file <- merge(prtcpnt.back, file, by = "Participant_Id")
             masterDataTable <- rbind.fill(masterDataTable, file)
           } else {
             masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
