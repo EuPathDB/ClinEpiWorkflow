@@ -28,6 +28,12 @@ if (!any(grepl("Error", metadata.temp[1]))) {
     metadata.file <- metadata.temp
     dataDict.file <- dataDict.temp
     names(metadata.file) <- tolower(names(metadata.file))
+    metadata.ws <-metadata.file
+    names(metadata.ws)[names(metadata.ws) == "iri"] <- "source_id"
+    names(metadata.ws)[names(metadata.ws) == "label"] <- "property"
+    names(metadata.ws)[names(metadata.ws) == "parentLabel"] <- "parent"
+    metadata.ws <- metadata.ws[, !'definition', with = FALSE]
+    fwrite(metadata.ws, file.path(dataDir, "shiny_masterDataTable_ontologyMetadata.tab"), sep = '\t', na = "NA")
     metadata.file <- merge(metadata.file, dataDict.file, by = "iri", all = TRUE)
     fwrite(metadata.file, file.path(dataDir, "shiny_downloadDir_ontologyMetadata.txt"), sep = '\t', na = "NA")
   } else {
