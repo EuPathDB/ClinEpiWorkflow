@@ -117,8 +117,8 @@ for (i in 1:length(shinyFiles)) {
           file <- file[, keep, with=FALSE]
           file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
           if (grepl("observation", shinyFiles[i]) & (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable))) {
-            file <- merge(prtcpnt.back, file, by = "Participant_Id")
-            masterDataTable <- rbind.fill(masterDataTable, file)
+            temp <- merge(prtcpnt.back, file, by = "Participant_Id")
+            masterDataTable <- rbind.fill(masterDataTable, temp)
             masterDataTable <- unique(masterDataTable)
           } else {
             masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
