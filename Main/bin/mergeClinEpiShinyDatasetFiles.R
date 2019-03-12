@@ -87,12 +87,12 @@ for (i in 1:length(shinyFiles)) {
     names(file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(file)))
     names(file)[names(file) == 'SOURCE_ID'] <- 'Participant_Id'
     names(file)[names(file) == 'OBSERVATION_ID'] <- 'Observation_Id'
-    names(file)[names(file) == 'HOUSEHOLD_ID'] <- 'Household_Id'
+    names(file)[names(file) == 'HOUSEHOLD'] <- 'Household_Id'
     if (grepl("observation", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Observation_Id'
     }
     if (grepl("household", shinyFiles[i])) {
-      names(file)[names(file) == 'NAME'] <- 'Household_Id'
+      names(file)[names(file) == 'NAME'] <- 'Household_Observation'
     }
     if (grepl("sample", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Sample_Id'
@@ -140,7 +140,8 @@ for (i in 1:length(shinyFiles)) {
 fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t', na="NA")
 #again make acopy of merged file for downloadSite
 drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
-masterData <- masterDataTable[, !drop, with=FALSE]
+masterDataTable <- as.data.table(masterDataTable)
+masterDataTable <- masterDataTable[, !drop, with=FALSE]
 names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')], "]")
 fwrite(masterDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
 
