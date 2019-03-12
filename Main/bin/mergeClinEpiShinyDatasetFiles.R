@@ -111,7 +111,7 @@ for (i in 1:length(shinyFiles)) {
 	  keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Household_Id')
 	  file <- file[, keep, with=FALSE]
 	  file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
-	  masterDataTable <- merge(masterDataTable, file, by = "Household_Id")
+	  masterDataTable <- merge(masterDataTable, file, by = "Household_Id", allow.cartesian = TRUE)
         } else {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
           file <- file[, keep, with=FALSE]
