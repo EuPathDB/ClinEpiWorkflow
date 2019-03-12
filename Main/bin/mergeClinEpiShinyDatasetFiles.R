@@ -103,8 +103,14 @@ for (i in 1:length(shinyFiles)) {
         if (grepl("samples", shinyFiles[i])) {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Observation_Id')
           file <- file[, keep, with=FALSE] 
+	  file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
           #some obs may not have samples, so set all=T
           masterDataTable <- merge(masterDataTable, file, by = "Observation_Id", all = TRUE)
+	} else if (grepl("household", shinyFiles[i])) {
+	  keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Household_Id')
+	  file <- file[, keep, with=FALSE]
+	  file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
+	  masterDataTable <- merge(masterDataTable, file, by = "Household_Id")
         } else {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
           file <- file[, keep, with=FALSE]
