@@ -57,6 +57,7 @@ if (any(grepl("participants", shinyFiles))) {
    prtcpnt.file <- prtcpnt_temp
    names(prtcpnt.file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(prtcpnt.file)))
    names(prtcpnt.file)[names(prtcpnt.file) == 'SOURCE_ID'] <- 'Participant_Id'
+   names(prtcpnt.file)[names(prtcpnt.file) == 'HOUSEHOLD_ID'] <- 'Household_Id'
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    prtcpnt.file <- prtcpnt.file[,which(unlist(lapply(prtcpnt.file, function(x)!all(is.na(x))))),with=F]
