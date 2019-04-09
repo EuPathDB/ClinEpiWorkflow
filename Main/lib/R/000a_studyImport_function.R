@@ -6,6 +6,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME) {
   require(purrr)
   require(plyr)
   require(dplyr)
+  require(haven)
   
   
   ###############################################
@@ -24,14 +25,10 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME) {
     dataFiles <- lapply(filenames, load)
   }
   if(TYPE==".sas7bdat"){
-    install.packages("haven")
-    library(haven)
     filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
     dataFiles <- lapply(filenames, read_sas)
   }
   if(TYPE==".dta"){
-    install.packages("haven")
-    library(haven)
     filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
     dataFiles <- lapply(filenames, read_dta)
   }
