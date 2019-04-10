@@ -33,8 +33,6 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME) {
     dataFiles <- lapply(filenames, read_dta)
   }
   if(TYPE==".sav" | TYPE==".zsav" | TYPE==".por"){
-    install.packages("haven")
-    library(haven)
     filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
     dataFiles <- lapply(filenames, read_spss)
   }

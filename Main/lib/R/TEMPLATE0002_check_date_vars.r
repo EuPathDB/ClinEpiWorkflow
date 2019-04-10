@@ -38,7 +38,7 @@ if(length(dateDF$uniqueVar) >0){
 #############################################################
 # check by hand to see if min, max, and range (values) of date variables look OK
 
-allVars[allVars$dateTime=="date?" & !is.na(allVars$dateTime), c("variable_dataFile", "type", "example", "dateTime", "formatCode", "minValue", "maxValue", "values")]
+allVars[allVars$dateTime=="date?" & !is.na(allVars$dateTime), c("uniqueVar", "type", "example", "dateTime", "formatCode", "minValue", "maxValue", "values")]
 
 
 #############################################################
