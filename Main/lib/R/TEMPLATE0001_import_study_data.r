@@ -13,6 +13,7 @@ FOLDER <- "./Raw data/DCC Processed Data"           # SET FOLDER CONTAINING RAW 
 STUDY <- "MAL-ED, 0 to 36 months"                   # SET DATASET (OR STUDY)
 MISSING <- c(NA, "na", "NA", "n/a", "N/A", "", ".") # SET MISSING VALUES (NA, "na", "NA", "n/a", "N/A", "", ".")
 DATE_TIME <- c("date", "dob")                       # SET REGEX FOR POSSIBLE DATE/TIME VARIABLES. NOTE: KEEP LOWERCASE
+PARTICIPANT_ID <- c("pid")                          # SET HOW THE PARTICIPANT ID VARIABLE IS LABELED IN THE DATAFILES. NOTE: KEEP LOWERCASE
 TYPE <- ".csv"                                      # SET FILE TYPE EXTENSION: 
                                                         # (".csv", ".txt", ".RData", ".sas7bdat", ".dta", ".sav", ".zsav", ".por")
                                                         # NOTE: EXTENSION MUST EXACTLY MATCH ONE OF THE SUGGESTIONS. 
@@ -24,7 +25,7 @@ TYPE <- ".csv"                                      # SET FILE TYPE EXTENSION:
 ###############################################
 # use studyImport function to get allVars, valueMap, and dataFiles
 
-temp <- studyImport(FOLDER, TYPE, STUDY, MISSING, DATE_TIME)
+temp <- studyImport(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
 
 allVars <- temp[[1]] 
 valueMap <- temp[[2]]
