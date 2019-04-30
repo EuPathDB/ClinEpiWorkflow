@@ -8,6 +8,8 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   require(dplyr)
   require(haven)
   
+  Sys.setlocale('LC_ALL','C') 
+  
   
   ###############################################
   # import all data files into a named list
