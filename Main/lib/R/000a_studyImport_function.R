@@ -233,7 +233,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   # create list of all possible values (responses) for each variable
   
   valueMap <- data.frame(uniqueVar=character(), dataSet=character(), variable=character(), dataFile=character(), values=character())
-
+  
   for (i in 1:length(dataFiles2)){
     for (j in unique(names(dataFiles2[[i]]))){
       print(paste(i, j, sep=", "))
@@ -279,10 +279,23 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
                               file=names(dataFiles2[i]),
                               values=">20 categories", 
                               stringsAsFactors=F) 
+        if("NA" %in% temp.values[!is.na(temp.values)]){
+          temp.df2 <- data.frame(uniqueVar=paste(tolower(j), tolower(gsub("[.].+$", "", names(dataFiles2[i]))), sep="|"),
+                                 dataSet=STUDY,
+                                 variable=tolower(j), 
+                                 dataFile=tolower(gsub("[.].+$", "", names(dataFiles2[i]))),
+                                 variable_dataFile=j,
+                                 file=names(dataFiles2[i]),
+                                 values="NA", 
+                                 stringsAsFactors=F)
+          temp.df <- rbind(temp.df, temp.df2)
+          rm(temp.df2)
+        }
       }
       
       #for categorical allVars where length of values <= 10 and type == dbl or int or date
-      if(length(temp.values[!is.na(temp.values)])>0 & length(temp.values[!is.na(temp.values)])<=10 & allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
+      if(length(temp.values[!is.na(temp.values)])>0 & length(temp.values[!is.na(temp.values)])<=10 & 
+         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
         temp.df <- data.frame(uniqueVar=paste(tolower(j), tolower(gsub("[.].+$", "", names(dataFiles2[i]))), sep="|"),
                               dataSet=STUDY,
                               variable=tolower(j), 
@@ -294,7 +307,8 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       }
       
       #for continuous allVars where length of values > 10 and type == dbl or int
-      if(length(temp.values[!is.na(temp.values)])>10 & allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
+      if(length(temp.values[!is.na(temp.values)])>10 & 
+         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
         temp.df <- data.frame(uniqueVar=paste(tolower(j), tolower(gsub("[.].+$", "", names(dataFiles2[i]))), sep="|"),
                               dataSet=STUDY,
                               variable=tolower(j), 
@@ -302,9 +316,20 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
                               variable_dataFile=j,
                               file=names(dataFiles2[i]),
                               values="continuous", 
-                              stringsAsFactors=F) 
+                              stringsAsFactors=F)
+        if("NA" %in% temp.values[!is.na(temp.values)]){
+          temp.df2 <- data.frame(uniqueVar=paste(tolower(j), tolower(gsub("[.].+$", "", names(dataFiles2[i]))), sep="|"),
+                                 dataSet=STUDY,
+                                 variable=tolower(j), 
+                                 dataFile=tolower(gsub("[.].+$", "", names(dataFiles2[i]))),
+                                 variable_dataFile=j,
+                                 file=names(dataFiles2[i]),
+                                 values="NA", 
+                                 stringsAsFactors=F)
+          temp.df <- rbind(temp.df, temp.df2)
+          rm(temp.df2)
+        }
       }
-      
       if (exists("temp.df") && is.data.frame(get("temp.df"))){
         valueMap <- rbind(valueMap, temp.df)
         print(names(dataFiles2[i]))
