@@ -228,6 +228,8 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
     dataFiles2 <- dataFiles
   }
   
+  names(dataFiles2) <- gsub("^.+./", "", filenames)
+  
   
   ###############################################
   # create list of all possible values (responses) for each variable
