@@ -25,13 +25,15 @@ dateConversion <- function(dateDF, allVarsDF, dataFilesDF) {
         formatCode <- allVarsDF$formatCode[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i]
         temp.values <- sort(as.Date(unique(as.vector(unlist(dataFilesDF[[i]][j]))), format=formatCode), na.last=T)
         
-        allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "minValue"] <- 
-          as.character(as.Date(min(temp.values[!is.na(temp.values)])))
-        allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "maxValue"] <- 
-          as.character(as.Date(max(temp.values[!is.na(temp.values)])))
-        allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "values"] <- 
-          paste(allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i,"minValue"], 
-                allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i,"maxValue"], sep=" to ")
+        if(length(temp.values[!is.na(temp.values)])>0){
+          allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "minValue"] <- 
+            as.character(as.Date(min(temp.values[!is.na(temp.values)])))
+          allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "maxValue"] <- 
+            as.character(as.Date(max(temp.values[!is.na(temp.values)])))
+          allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i, "values"] <- 
+            paste(allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i,"minValue"], 
+                  allVarsDF[!is.na(allVarsDF$variable) & allVarsDF$variable==j & allVarsDF$dataFile==i,"maxValue"], sep=" to ")
+        }
       }
     }
   }

@@ -38,6 +38,10 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
     filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
     dataFiles <- lapply(filenames, read_spss)
   }
+  if(TYPE==".dat"){
+    filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
+    dataFiles <- lapply(filenames, read.csv, as.is=T)
+  }
   
   names(dataFiles) <- gsub("^.+./", "", filenames)
   
@@ -108,6 +112,18 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   
   #############################################################
   # using each variable's value "example", see which match format codes for date variables. If so, mark dateTime == "date?" 
+    # CHEAT SHEET FOR REGEX: 
+      # \\d = ANY ONE DIGIT FROM 0-9 
+      # \\D = ANY ONE CHARACTER THAT IS NOT A DIGIT
+    # CHEAT SHEET FOR DATES: 
+      # %d = day as a number (0-31)	
+      # %a = abbreviated weekday (Mon)
+      # %A = unabbreviated weekday (Monday)
+      # %m = month (00-12)	
+      # %b = abbreviated month (Jan)
+      # %B = unabbreviated month (January)
+      # %y = 2-digit year (07)
+      # %Y = 4-digit year (2007)
   
   allVars$formatCode <- NA
   allVars[grep("^\\d\\d\\D\\D\\D\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d%b%Y"
@@ -119,6 +135,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   allVars[grep("^^\\d\\d\\D\\D\\D\\d\\d:", allVars$example), "formatCode"] <- "%d%b%y:%h:%m:%s"
   allVars[grep("^\\d\\d/\\d\\d/\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d/%m/%Y"
   allVars[grep("^\\d/\\d\\d/\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d/%m/%Y"
+  allVars[grep("^\\d\\d/\\D\\D\\D/\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d/%b/%Y"
   
   allVars[!is.na(allVars$formatCode), "dateTime"] <- "date?"
 
@@ -204,8 +221,21 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   # create "flag" and flag variables that are duplicated or missing 100% of data
   
   allVars$flag <- NA
-  allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"] <- "duplicated"
-  allVars[allVars$percentMissing==1, "flag"] <- "no data"
+  for(i in names(dataFiles)){
+    d <- dataFiles[[i]]
+    if(length(d[,1])==0){
+      print(i)
+      allVars$flag[allVars$file==i] <- "file has no data"
+    }
+  }
+    
+  allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]) & allVars$flag !="file has no data", "flag"]
+  table(allVars$flag, useNA="ifany")
+  
+  allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"] <- gsub(", NA", "", paste("duplicated variable", 
+                                                                                                         allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"], 
+                                                                                                         sep=", "))
+  allVars[allVars$percentMissing==1 & allVars$flag %in% c("file has no data", "duplicated variable, file has no data")==F, "flag"] <- "no data"
   
   
   ###############################################
@@ -371,4 +401,5 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   # return results of the function as a list of allVars, valueMap, and dataFiles
   
   list(allVars, valueMap, dataFiles)
-}
+  }
+  
