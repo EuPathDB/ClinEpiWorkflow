@@ -30,8 +30,8 @@ temp <- studyImport(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
 allVars <- temp[[1]] 
 valueMap <- temp[[2]]
 dataFiles <- temp[[3]]
-
+originalFiles <- temp[[4]]
 
 #############################################################
 # save workspace
-save(allVars, valueMap, dataFiles, file=OUTPUT)
+save(allVars, valueMap, dataFiles, originalFiles, file=OUTPUT)

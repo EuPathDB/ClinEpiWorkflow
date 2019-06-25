@@ -96,7 +96,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   
   allVars <- ldply(variableMaps, data.frame)
   allVars <- allVars[,names(allVars) != ".id"]
-
+  
   rm(variableMaps)
   
   
@@ -112,18 +112,18 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   
   #############################################################
   # using each variable's value "example", see which match format codes for date variables. If so, mark dateTime == "date?" 
-    # CHEAT SHEET FOR REGEX: 
-      # \\d = ANY ONE DIGIT FROM 0-9 
-      # \\D = ANY ONE CHARACTER THAT IS NOT A DIGIT
-    # CHEAT SHEET FOR DATES: 
-      # %d = day as a number (0-31)	
-      # %a = abbreviated weekday (Mon)
-      # %A = unabbreviated weekday (Monday)
-      # %m = month (00-12)	
-      # %b = abbreviated month (Jan)
-      # %B = unabbreviated month (January)
-      # %y = 2-digit year (07)
-      # %Y = 4-digit year (2007)
+  # CHEAT SHEET FOR REGEX: 
+  # \\d = ANY ONE DIGIT FROM 0-9 
+  # \\D = ANY ONE CHARACTER THAT IS NOT A DIGIT
+  # CHEAT SHEET FOR DATES: 
+  # %d = day as a number (0-31)	
+  # %a = abbreviated weekday (Mon)
+  # %A = unabbreviated weekday (Monday)
+  # %m = month (00-12)	
+  # %b = abbreviated month (Jan)
+  # %B = unabbreviated month (January)
+  # %y = 2-digit year (07)
+  # %Y = 4-digit year (2007)
   
   allVars$formatCode <- NA
   allVars[grep("^\\d\\d\\D\\D\\D\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d%b%Y"
@@ -138,8 +138,8 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   allVars[grep("^\\d\\d/\\D\\D\\D/\\d\\d\\d\\d$", allVars$example), "formatCode"] <- "%d/%b/%Y"
   
   allVars[!is.na(allVars$formatCode), "dateTime"] <- "date?"
-
-
+  
+  
   ###############################################
   # determine minValue, maxValue, values, uniqueValueCount, percentMissing
   
@@ -153,20 +153,20 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       
       # fill out information for variables that have numeric or integer values
       if(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"type"] %in% c("dbl", "int", "date")){
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"] <- min(temp.values[temp.values!="" & !is.na(temp.values)])
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"] <- max(temp.values[temp.values!="" & !is.na(temp.values)])
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"uniqueValueCount"] <- length(unique(all.values[all.values!="" & !is.na(all.values)]))
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"percentMissing"] <- length(all.values[all.values %in% MISSING])/length(all.values)
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"values"] <- 
-           paste(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"], allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"], sep=" to ")
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"] <- min(temp.values[temp.values!="" & !is.na(temp.values)])
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"] <- max(temp.values[temp.values!="" & !is.na(temp.values)])
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"uniqueValueCount"] <- length(unique(all.values[all.values!="" & !is.na(all.values)]))
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"percentMissing"] <- length(all.values[all.values %in% MISSING])/length(all.values)
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"values"] <- 
+          paste(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"], allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"], sep=" to ")
       }
       
       # fill out information for variables that have character or logical values
       if(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i], "type"] %in% c("chr", "lgl")){
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"] <- "n/a"
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"] <- "n/a"
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"uniqueValueCount"] <- length(unique(all.values[all.values!="" & !is.na(all.values)]))
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"percentMissing"] <- length(all.values[all.values %in% MISSING])/length(all.values)
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"] <- "n/a"
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"] <- "n/a"
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"uniqueValueCount"] <- length(unique(all.values[all.values!="" & !is.na(all.values)]))
+        allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"percentMissing"] <- length(all.values[all.values %in% MISSING])/length(all.values)
         if (length(temp.values[!is.na(temp.values)]) > 10){
           allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"values"] <- ">10 unique values"
         } 
@@ -228,21 +228,21 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       allVars$flag[allVars$file==i] <- "file has no data"
     }
   }
-    
+  
   allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]) & allVars$flag !="file has no data", "flag"]
   table(allVars$flag, useNA="ifany")
   
   allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"] <- gsub(", NA", "", paste("duplicated variable", 
-                                                                                                         allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"], 
-                                                                                                         sep=", "))
+                                                                                                                          allVars[allVars$variable %in% unique(allVars$variable[duplicated(allVars$variable)]), "flag"], 
+                                                                                                                          sep=", "))
   allVars[allVars$percentMissing==1 & allVars$flag %in% c("file has no data", "duplicated variable, file has no data")==F, "flag"] <- "no data"
   
   
   ###############################################
   # PREP for value map: if TYPE==".csv" or if TYPE=".txt" re-import data for creating value map 
-    # values entered as "NA" versus no value entered (BLANK) need to be differentiated
-        ### blank cells in the .csv are now <NA> --> these won't need to be added to the value map file
-        ### "NA" cells in the .csv are now "NA" -->  these need to be added to the value map file & mapped to :::UNDEF::: to remove or given a different mapped term
+  # values entered as "NA" versus no value entered (BLANK) need to be differentiated
+  ### blank cells in the .csv are now <NA> --> these won't need to be added to the value map file
+  ### "NA" cells in the .csv are now "NA" -->  these need to be added to the value map file & mapped to :::UNDEF::: to remove or given a different mapped term
   
   if(TYPE==".csv"){
     filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
@@ -372,7 +372,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   }
   rm(i, j)
   
-
+  
   #############################################################
   # demark boolean variables (ie, those with only values of 0, 1 and NA)
   
@@ -385,21 +385,40 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   
   
   #############################################################
+  # convert <NA> and "NA" into "" and <NA> to match the original data file for .csv and .txt files
+  
+  if(TYPE==".txt" | TYPE==".csv"){
+    for(j in names(dataFiles2)){
+      for(i in 1:ncol(dataFiles2[[j]])){
+        dataFiles2[[j]][,i][is.na(dataFiles2[[j]][,i])] <- ""
+        dataFiles2[[j]][,i][dataFiles2[[j]][,i]=="NA"] <- NA
+      }
+    }
+  }
+  
+  #############################################################
   # shorten names of each dataFile in the list to match uniqueVar after the pipe
   
+  names(dataFiles2) <- tolower(gsub("[.].+$", "", gsub("^.+./", "", filenames)))
   names(dataFiles) <- tolower(gsub("[.].+$", "", gsub("^.+./", "", filenames)))
   
   
   #############################################################
   # make column names in dataFiles lowercase
   
-  for(i in unique(names(dataFiles))){
-      names(dataFiles[[i]]) <- tolower(names(dataFiles[[i]]))
+  for(i in unique(names(dataFiles2))){
+    names(dataFiles2[[i]]) <- tolower(names(dataFiles2[[i]]))
   }
+  
+  for(i in unique(names(dataFiles))){
+    names(dataFiles[[i]]) <- tolower(names(dataFiles[[i]]))
+  }
+  
   
   #############################################################
   # return results of the function as a list of allVars, valueMap, and dataFiles
   
-  list(allVars, valueMap, dataFiles)
-  }
+  originalFiles <- dataFiles2
+  list(allVars, valueMap, dataFiles, originalFiles)
+}
   
