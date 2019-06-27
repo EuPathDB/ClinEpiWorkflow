@@ -138,6 +138,14 @@
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
       <depends name="makeProjectReleaseDownloadDir"/>
     </step>
+
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
+      <paramValue name="projectName">${subProjectName}</paramValue>
+      <paramValue name="relativeManualDeliveryDir">${groupName}/${studyName}/${version}/final/downloadSiteFiles</paramValue>
+      <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
+      <depends name="makeProjectReleaseDownloadDir"/>
+    </step>
   </datasetTemplate>
 
 </workflowGraph>
