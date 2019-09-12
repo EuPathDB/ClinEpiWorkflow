@@ -15,7 +15,7 @@ split_uniqueVar <- function(conversion_file) {
   conversion_file$uniqueVar <- conversion_file$variable
 
   temp <- conversion_file[grep("[|]", conversion_file$variable),]
-  conversion_file <- conversion_file[conversion_file$variable %in% temp==F,]
+  conversion_file <- conversion_file[conversion_file$variable %in% temp$variable==F,]
   
   for(i in unique(temp$variable)){
     print(dim(conversion_file))
