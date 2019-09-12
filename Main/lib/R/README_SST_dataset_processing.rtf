@@ -7,7 +7,7 @@
 
 \f0\fs24 \cf0 How to process new datasets:\
 \
-1) Run 0001_import_study_data.R and save the RData file. This will generate a preliminary file based on the data in the actual data files.\
+1) Run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file based on the data in the actual data files.\
 \
 2) Load the RData file and run 0002_SST_add_data_dictionary. This will merge in information from a txt or csv data dictionary(s). Set up based on columns available, but hopefully codebookDescription, codebookValues, and maybe even another column describing branching patterns etc that can be added as notesForDL. Go through the resulting allVariables file manually and decide where to keepDiscard.\
 \
