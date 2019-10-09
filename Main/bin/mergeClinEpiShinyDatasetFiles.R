@@ -83,6 +83,7 @@ for (i in 1:length(shinyFiles)) {
   if (any(grepl("Error", file_temp[1]))) {
     message("Warning: ", shinyFiles[i], " unreadable... skipping.")
   } else {
+    message("parsing ", shinyFiles[i])
     file <- file_temp
     names(file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(file)))
     names(file)[names(file) == 'SOURCE_ID'] <- 'Participant_Id'
