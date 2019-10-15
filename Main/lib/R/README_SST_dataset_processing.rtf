@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\margl1440\margr1440\vieww15200\viewh10640\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 How to process new datasets:\
@@ -11,15 +11,14 @@
 \
 2) Load the RData file and run 0002_SST_add_data_dictionary. This will merge in information from a txt or csv data dictionary(s). Set up based on columns available, but hopefully codebookDescription, codebookValues, and maybe even another column describing branching patterns etc that can be added as notesForDL. Go through the resulting allVariables file manually and decide where to keepDiscard.\
 \
-3) Run 0003_SST_make_variableMap. This will remove all variables to discard and add a column for the label and IRI. Go through manually and fill out the \'93label\'94, \'93IRI\'94, and \'93category\'94 where known. Fill out \'93label\'94 and \'93category\'94 for new variables. Fill out termType for all variables.\
+3) Run 0003_SST_make_variableMap. This will remove all variables to discard and add a column for the label, IRI, parentLabel, and parentIRI.  It also removes the max and min columns. Go through manually and:\
+	(i) For known variable - fill out the \'93label\'94, \'93IRI\'94, and \'93termType\'94\
+	(ii) For new variables - fill out the \'93label\'94, \'93termType\'94, \'93category\'94, \'93parentLabel\'94, and \'93parentIRI\'94\
+	(iii) Create a new row for any new multifilters/categories (new parentLabel with no matching parentIRI yet). Place the parentLabel under the \'93label\'94 column and fill out \'93termType\'94, \'93category\'94, \'93parentLabel\'94, and \'93parentIRI\'94 to help place the new category in the hierarchy.\
 \
-4) Run 0004_SST_update_variableMap. This will add in parentLabel and parentIRI where known. Then go through manually to suggest parentLabel/parentIRI for new variables. \
-\
-5) Run 0005_SST_check_parent_present. This will check there is a row for every category and add one for every parent category that is missing. Also cleans up and removes 
+4) Run 0004_SST_update_variableMap. This will clean up and remove 
 \i NA
-\i0 s from the file and removes quotations from around labels and parent labels that were copy/pasted from protege. Note, this should be run iteratively until the dimensions of varMap stop increasing so you create a row for every parent category that is used in the web display hierarchy.\
-\
-6) Run 0006_SST_finalize_parent_present. This script does the same as the previous, except it removes columns that are not needed for the final variableMap file. You should only run this once, then check that termType is complete for all newly added categories. Decide whether you will be using just the variable name or the uniqueVar to represent all variables. If using uniqueVar, delete the variable column and rename uniqueVar to variable. If using variable, just delete uniqueVar. Once finished, send to the ontology team via Git.\
+\i0 s from the file and remove quotations from around labels and parentLabels that were copy/pasted from protege. It will also remove all extra columns that don\'92t belong in the variableMap file given to the ontology team. Decide whether you will be using just the variable name or the uniqueVar to represent all variables. If using uniqueVar, delete the variable column and rename uniqueVar to variable. If using variable, delete the uniqueVar column. Once finished, send to the ontology team via Git.\
  \
-7) Run 0007_SST_update_valueMap to remove discarded variables. Then in R may want to subset the file to look at variables marked as continuous to see if you can also drop those from the file and do the same check for variables marked as >20 values (might be free text fields). Then go through manually to remove/add valueMapping as needed. \'93variable\'94 will have the variable name and \'93variable2\'94 will have uniqueVar. Update the valueMap file so it has 2 columns of the same depending on what you used in the final variableMap file.\
+5) Run 0007_SST_update_valueMap to remove discarded variables. Then in R may want to subset the file to look at variables marked as continuous to see if you can also drop those from the file and do the same check for variables marked as >20 values (might be free text fields). Then go through manually to remove/add valueMapping as needed. \'93variable\'94 will have the variable name and \'93variable2\'94 will have uniqueVar. Update the valueMap file so it has 2 columns of the same depending on what you used in the final variableMap file.\
 }
