@@ -6,7 +6,7 @@
 # that goes to the ontology team. 
 
 
-source("/Users/sshahsimpson/Documents/General_R_files/functions/004_update_variableMap.R") #load the function
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0004_SST_update_variableMap.R") #load the function
 varMap <- read.csv("./R_output/PROVIDE_variableMap_v2.csv", as.is = T) #load the variableMap file that you've been editing
 OUTPUT <- "./R_output/PROVIDE_variableMap_v3.csv" #indicate where you want to save the updated file
 updateVariableMap(varMap, OUTPUT) #run the function. Automatically writes the file 

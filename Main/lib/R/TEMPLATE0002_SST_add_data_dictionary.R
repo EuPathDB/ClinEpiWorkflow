@@ -24,7 +24,7 @@ NOTESFORDL <- "Missing.Values"
 # Set where you want to save your updated allVariables file.
 OUTPUT <- "./R_output/PROVIDE_allVariables_v1.csv"
 # Load the function
-source("/Users/sshahsimpson/Documents/General_R_files/functions/002_add_data_dictionary.R")
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0002_SST_add_data_dictionary.R")
 
 allVars2 <- addDD(FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, NOTESFORDL)
 
