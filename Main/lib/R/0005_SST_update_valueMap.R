@@ -10,9 +10,9 @@ library(dplyr)
 ###############################################################################
 
 #REMOVE VARIABLES MARKED AS "DISCARD" #########################################
-toKeep <- allVars$variable[!(allVars$keepDiscard == "discard")]
+toKeep <- allVars$uniqueVar[!(allVars$keepDiscard == "discard")]
 dim(valueMap)
-valueMap <- valueMap[valueMap$variable %in% toKeep, c("variable","values","uniqueVar")]
+valueMap <- valueMap[valueMap$uniqueVar %in% toKeep, c("variable","values","uniqueVar")]
 dim(valueMap)
 ###############################################################################
 
