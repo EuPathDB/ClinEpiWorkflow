@@ -2,7 +2,7 @@
 
 # This function removes discarded variables. 
 
-source("/Users/sshahsimpson/Documents/General_R_files/functions/007_update_valueMap.R") #load function
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0005_SST_update_valueMap.R") #load function
 load(file = "001.PROVIDE_allVars.RData") #load the valueMap Danica's script generated
 allVars <- read.csv("./R_output/PROVIDE_allVariables_v1.csv", as.is = T) #load the allVariables file that indicated which variables to keep/discard
 OUTPUT <- "./R_output/PROVIDE_valueMap_v1.txt" #indicate where to save the valueMap file
