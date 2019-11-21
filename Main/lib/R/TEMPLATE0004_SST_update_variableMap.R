@@ -1,16 +1,20 @@
-# Add parentLabel and parentIRI ######################################################################
+# Update variableMap file ######################################################################
 
-# Adds in parentLabel and parentIRI where known. Creates a new row for each known
-# category.  
+# This function cleans up and removes NAs from the file and removes quotations 
+# from around labels and parentLabels that were copy/pasted from protege. It 
+# will also remove all extra columns that don’t belong in the variableMap file 
+# that goes to the ontology team. 
 
-# Note, the function pulls in the conversion file for the ClinEpi ontology. You 
-# will have to update the path based on your own system and where you save Git 
-# repo clones on your computer. 
 
-source("/Users/sshahsimpson/Documents/General_R_files/functions/004_update_variableMap.R") #load the function
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0004_SST_update_variableMap.R") #load the function
 varMap <- read.csv("./R_output/PROVIDE_variableMap_v2.csv", as.is = T) #load the variableMap file that you've been editing
 OUTPUT <- "./R_output/PROVIDE_variableMap_v3.csv" #indicate where you want to save the updated file
 updateVariableMap(varMap, OUTPUT) #run the function. Automatically writes the file 
 
-# Go through manually to suggest parentLabel/parentIRI for new variables. 
+
+# Decide whether you will be using "variable" or "uniqueVar" to represent all 
+# variables going forward and update the file manually accordingly.
+# If using uniqueVar, delete the variable column and rename uniqueVar to variable. 
+# If using variable, delete the uniqueVar column. 
+# Once finished, send to the ontology team via Git.
 
