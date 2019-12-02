@@ -1,26 +1,13 @@
 <project name="ClinEpiWorkflow" default="ClinEpiWorkflow-Installation" basedir=".">
 
-  <import file="${projectsDir}/ApiCommonWorkflow/build.xml" optional="true" />
-
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Dependencies  oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
+  <import file="${projectsDir}/ClinEpiData/build.xml" optional="true" />
+  <import file="${projectsDir}/ApiCommonWorkflow/build.xml" optional="true" />
 
-  <target name="ApiCommonWorkflow-Installation">
-    <ant antfile="../ApiCommonWorkflow/build.xml" target="ApiCommonWorkflow-Installation">
-      <property name="project" value="ApiCommonWorkflow"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>  
 
-  <target name="ClinEpiData-Installation">
-    <ant antfile="../ClinEpiData/build.xml" target="ClinEpiData-Installation">
-      <property name="project" value="ClinEpiData"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>  
-  
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -52,6 +39,7 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Update    oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
+
   <target name="ClinEpiWorkflow-ChildUpdate">
     <ant target="defaultProjectUpdate">
       <property name="project" value="ApiCommonWorkflow"/>
