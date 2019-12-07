@@ -12,8 +12,7 @@ load("R_output/001.PROVIDE_allVars.RData")
 # They must be in csv, txt or xls format (1 tab only). Make sure they have the same
 # headers in each file
 FOLDER <- "R_output/dataDictionary" 
-# TYPE must be ".csv",".txt", or ".xls"
-TYPE <- ".csv"       
+TYPE <- ".csv"       # TYPE must be ".csv",".txt", or ".xls"
 # Set the next 4 variables to match the relevant column headers from the data 
 # dictionary. Names need to match how the column headers will look when loaded
 # in R (e.g. spaces change to ".", etc.)

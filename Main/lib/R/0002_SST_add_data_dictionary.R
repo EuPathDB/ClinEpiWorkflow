@@ -6,9 +6,8 @@ addDD <- function(FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, N
 #manually edited to indicate keep/discard 
     
 #LOAD LIBRARIES ###############################################################
-library(purrr)
 library(plyr)
-library(dplyr)
+library(tidyverse)
 library(readxl)
 ###############################################################################
 
