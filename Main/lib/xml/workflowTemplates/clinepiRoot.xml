@@ -107,7 +107,7 @@
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="tables">SampleId,PANRecord,PANResults,PANIO,PANExtDbRls,InferredParams,PANParamValues,DefaultChars,Metadata,MetadataSummary,Ontology,Samples,PropertyType,PropertyCategory,HousePartIO,HouseObsIO,PartObsIO,ObsSampleIO,ObsObsIO,HouseEntoIO,EntoInsSplIO,ParticipantMD,ObservationMD,HouseholdMD,EntomologyMD</paramValue>
+      <paramValue name="tables">SampleId,PANRecord,PANResults,PANIO,PANExtDbRls,InferredParams,PANParamValues,DefaultChars,Metadata,MetadataSummary,Ontology,Samples,PropertyType,PropertyCategory,HousePartIO,HouseObsIO,PartObsIO,ObsSampleIO,ObsObsIO,HouseEntoIO,EntoInsSplIO,ParticipantMD,ObservationMD,HouseholdMD,EntomologyMD,RecordCount</paramValue>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
     </step>
