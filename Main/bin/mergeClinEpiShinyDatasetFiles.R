@@ -31,7 +31,7 @@ if (!any(grepl("Error", metadata.temp[1]))) {
     metadata.ws <-metadata.file
     names(metadata.ws)[names(metadata.ws) == "iri"] <- "source_id"
     names(metadata.ws)[names(metadata.ws) == "label"] <- "property"
-    #names(metadata.ws)[names(metadata.ws) == "parentlabel"] <- "parent"
+    names(metadata.ws)[names(metadata.ws) == "parentlabel"] <- "parent"
     metadata.ws <- metadata.ws[, !'definition', with = FALSE]
     fwrite(metadata.ws, file.path(dataDir, "shiny_masterDataTable_ontologyMetadata.tab"), sep = '\t', na = "NA")
     metadata.file <- merge(metadata.file, dataDict.file, by = "iri", all = TRUE)
@@ -57,6 +57,8 @@ if (any(grepl("participants", shinyFiles))) {
    prtcpnt.file <- prtcpnt_temp
    names(prtcpnt.file) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(prtcpnt.file)))
    names(prtcpnt.file)[names(prtcpnt.file) == 'SOURCE_ID'] <- 'Participant_Id'
+   #remove other participant id col
+   if ("EUPATH_0000095" %in% names(prtcpnt.file)) { prtcpnt.file$EUPATH_0000095 <- NULL }
    names(prtcpnt.file)[names(prtcpnt.file) == 'HOUSEHOLD'] <- 'Household_Id'
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
@@ -64,6 +66,7 @@ if (any(grepl("participants", shinyFiles))) {
    masterDataTable <- prtcpnt.file
    prtcpnt.back <- prtcpnt.file
    names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id')], "]")
+    setcolorder(prtcpnt.file, order(names(prtcpnt.file)))
     fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participant.txt"), sep='\t', na="NA")
  } 
 } else {
@@ -74,8 +77,6 @@ shinyFiles <- shinyFiles[!grepl("participants", shinyFiles)]
 #if masterDataTable already exists, ignore it
 shinyFiles <- shinyFiles[!grepl("masterDataTable", shinyFiles)]
 shinyFiles <- shinyFiles[!grepl("downloadDir", shinyFiles)]
-
-#consider using reduce rather than for loop here. may save time
 
 for (i in 1:length(shinyFiles)) {
   file_temp <- try(fread(shinyFiles[i], quote="", na.strings = c("N/A", "na", "")))
@@ -94,6 +95,13 @@ for (i in 1:length(shinyFiles)) {
     }
     if (grepl("household", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Household_Observation'
+      if ("EUPATH_0015467" %in% names(file)) {
+        if (uniqueN(file$EUPATH_0015467, na.rm=TRUE) == 1) {
+          file$Household_Observation <- NULL
+        }
+      } else {
+        file$Household_Observation <- NULL
+      }
     }
     if (grepl("sample", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Sample_Id'
@@ -107,7 +115,13 @@ for (i in 1:length(shinyFiles)) {
           file <- file[, keep, with=FALSE] 
 	  file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
           #some obs may not have samples, so set all=T
+          if ('Household_Id' %in% names(masterDataTable) | 'Household_Id' %in% names(file)) {
+            cols <- c(names(file), 'Participant_Id', 'Household_Id')
+          } else {
+            cols <- c(names(file), 'Participant_Id')
+          }
           masterDataTable <- merge(masterDataTable, file, by = "Observation_Id", all = TRUE)
+          file <- unique(masterDataTable[, cols, with=FALSE])
 	} else if (grepl("household", shinyFiles[i])) {
 	  keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Household_Id')
 	  file <- file[, keep, with=FALSE]
@@ -120,32 +134,43 @@ for (i in 1:length(shinyFiles)) {
           keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Participant_Id')
           file <- file[, keep, with=FALSE]
           file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
+          if ('Household_Id' %in% names(masterDataTable) | 'Household_Id' %in% names(file)) {
+            cols <- c(names(file), 'Household_Id')
+          } else {
+            cols <- names(file)
+          }      
           if (grepl("observation", shinyFiles[i]) & (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable))) {
             temp <- merge(prtcpnt.back, file, by = "Participant_Id")
             masterDataTable <- rbind.fill(masterDataTable, temp)
             masterDataTable <- unique(masterDataTable)
           } else {
             masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
-          } 
+          }
+          file <- unique(masterDataTable[, cols, with=FALSE])
         }
 
-        #also make a copy with updated col names for downloadSite dir
+        #make a copy with updated col names for downloadSite dir
         drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
         file <- file[, !drop, with=FALSE]
-        names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
-        fileName <- gsub("shiny_", "shiny_downloadDir_", shinyFiles[i])
-        fwrite(file, fileName, sep='\t', na="NA") 
-
+        testDrop <- c("Household_Id", "Participant_Id", "Observation_Id")
+        testFile <- file[, !testDrop, with=FALSE]
+        if (length(testFile) > 0) {
+          names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(file)[!names(file) %in% c('Participant_Id', 'Observation_Id')], "]")
+          setcolorder(file, order(names(file)))
+          fileName <- gsub("shiny_", "shiny_downloadDir_", shinyFiles[i])
+          fwrite(file, fileName, sep='\t', na="NA") 
+        }
       }
     }
   }
 }
 
 fwrite(masterDataTable, file.path(dataDir,"shiny_masterDataTable.txt"), sep='\t', na="NA")
-#again make acopy of merged file for downloadSite
+#make a copy of merged file for downloadSite
 drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
 masterDataTable <- as.data.table(masterDataTable)
 masterDataTable <- masterDataTable[, !drop, with=FALSE]
 names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')] <- paste0(metadata.file$label[match(names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')], metadata.file$iri)], " [", names(masterDataTable)[!names(masterDataTable) %in% c('Participant_Id', 'Observation_Id')], "]")
+setcolorder(masterDataTable, order(names(masterDataTable)))
 fwrite(masterDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
 
