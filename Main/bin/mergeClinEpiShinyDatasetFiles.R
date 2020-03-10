@@ -145,6 +145,7 @@ for (i in 1:length(shinyFiles)) {
           } else {
             masterDataTable <- merge(masterDataTable, file, by = "Participant_Id")
           }
+	  masterDataTable <- as.data.table(masterDataTable)
           file <- unique(masterDataTable[, cols, with=FALSE])
         }
 
