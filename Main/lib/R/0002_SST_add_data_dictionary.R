@@ -6,7 +6,6 @@ addDD <- function(FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, N
 #manually edited to indicate keep/discard 
     
 #LOAD LIBRARIES ###############################################################
-library(plyr)
 library(tidyverse)
 library(readxl)
 ###############################################################################
@@ -37,16 +36,10 @@ rm(filenames)
 
 #rename variables to be merged and cut dataDict files down to those core variables
 for(i in 1:length(dataDict)){
-    dataDict[[i]] <- rename(dataDict[[i]],variable = VARIABLE, 
+    dataDict[[i]] <- select(dataDict[[i]],variable = VARIABLE, 
                             codebookDescription = CODEBOOKDESCRIPTION,
                             codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL)    
 }
-
-toMerge <- c("variable","codebookDescription","codebookValues","notesForDL")
-
-for(i in 1:length(dataDict)){
-    dataDict[[i]] <- dataDict[[i]][,toMerge]
-} #pull out only the columns from the dataDictionaries needed for the allVariables file 
 
 dataDict2 <- lapply(dataDict, mutate_all,as.character) #converts all columns in all files to character 
 #merge data dictionary files together
