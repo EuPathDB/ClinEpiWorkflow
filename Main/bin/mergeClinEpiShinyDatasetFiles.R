@@ -38,7 +38,7 @@ if (!any(grepl("Error", metadata.temp[1]))) {
     fwrite(metadata.file, file.path(dataDir, "shiny_downloadDir_ontologyMetadata.txt"), sep = '\t', na = "NA")
   } else {
     stop("Data Dictionary mapping file missing or unreadable. Cannot create download files!")
-  #}
+  }
 } else {
   stop("Ontology file missing or unreadable. Cannot create download files!")
 }
