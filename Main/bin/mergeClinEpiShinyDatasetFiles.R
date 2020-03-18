@@ -20,7 +20,7 @@ if (is.null(baseFileName)) {
 
 #and create shiny ontology downloadable file
 metadata.temp <- fread(paste0(dataDir, "/ontologyMetadata.txt"))
-#dataDict.temp <- fread(paste0(dataDir, "/ontologyMapping.txt"))
+dataDict.temp <- fread(paste0(dataDir, "/ontologyMapping.txt"))
 
 if (!any(grepl("Error", metadata.temp[1]))) {
   if (!any(grepl("Error", dataDict.temp[1]))) {
