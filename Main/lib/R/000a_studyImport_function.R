@@ -7,6 +7,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   require(plyr)
   require(dplyr)
   require(haven)
+  require(labelled)
   
   Sys.setlocale('LC_ALL','C') 
   
@@ -45,6 +46,10 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   
   names(dataFiles) <- gsub("^.+./", "", filenames)
   
+  for(i in names(dataFiles)){
+    dataFiles[[i]] <- as.data.frame(dataFiles[[i]])
+  }
+
   
   ###############################################
   # clean up data by removing any values that start or end with spaces (variables with structure = "chr" only)
@@ -57,6 +62,20 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       }
     }
   }
+  rm(i,j)
+  
+  
+  ###############################################
+  # clean up by renaming any columns that are labeled the same way in the same data file
+  
+  for(i in 1:length(dataFiles)){
+    print(i)
+    if(length(tolower(names(dataFiles[[i]]))[duplicated(tolower(names(dataFiles[[i]])))])>0){
+      print(names(dataFiles[[i]])[duplicated(tolower(names(dataFiles[[i]])))])
+      names(dataFiles[[i]])[duplicated(tolower(names(dataFiles[[i]])))] <- paste(names(dataFiles[[i]])[duplicated(tolower(names(dataFiles[[i]])))], "ClinEpi", sep="...")
+    }
+  }
+  rm(i)
   
   
   ###############################################
@@ -65,7 +84,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   variableMaps <- list()
   
   for(i in 1:length(dataFiles)){
-    print(paste(i, j, sep=", "))
+    print(i)
     variableMaps[[paste("var", names(dataFiles[i]), sep="_")]] <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles[i]))), tolower(names(dataFiles[[i]])), sep="::"),
                                                                              dataSet=STUDY,
                                                                              variable=tolower(names(dataFiles[[i]])),
@@ -152,7 +171,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       temp.values <- sort(unique(as.vector(unlist(dataFiles[[i]][j]))), na.last=T)
       
       # fill out information for variables that have numeric or integer values
-      if(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"type"] %in% c("dbl", "int", "date")){
+      if(allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"type"] %in% c("dbl", "int", "date", "dbl+lbl")){
         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"minValue"] <- min(temp.values[temp.values!="" & !is.na(temp.values)])
         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"maxValue"] <- max(temp.values[temp.values!="" & !is.na(temp.values)])
         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles)[i],"uniqueValueCount"] <- length(unique(all.values[all.values!="" & !is.na(all.values)]))
