@@ -63,6 +63,9 @@ if (any(grepl("participants", shinyFiles))) {
    drop <- c("PAN_ID", "NAME", "DESCRIPTION", "PAN_TYPE_ID", "PAN_TYPE")
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    prtcpnt.file <- prtcpnt.file[,which(unlist(lapply(prtcpnt.file, function(x)!all(is.na(x))))),with=F]
+   dates <- metadata.file$iri[metadata.file$type == 'date']
+   dates <- dates %in% names(prtcpnt.file)
+   setDT(prtcpnt.file)[, (dates) := lapply(.SD, as.Date, '%d-%b-%y'), .SDcols = dates]
    masterDataTable <- prtcpnt.file
    prtcpnt.back <- prtcpnt.file
    names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')] <- paste0(metadata.file$label[match(names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')], metadata.file$iri)], " [", names(prtcpnt.file)[!names(prtcpnt.file) %in% c('Participant_Id', 'Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')], "]")
@@ -111,6 +114,9 @@ for (i in 1:length(shinyFiles)) {
     if (grepl("light", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Collection_Id'
     }
+    dates <- metadata.file$iri[metadata.file$type == 'date']
+    dates <- dates %in% names(file)
+    setDT(file)[, (dates) := lapply(.SD, as.Date, '%d-%b-%y'), .SDcols = dates]
 
     if (!is.null(file)) {
       if (nrow(file) > 1) { 
