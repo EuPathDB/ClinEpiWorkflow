@@ -64,7 +64,7 @@ if (any(grepl("participants", shinyFiles))) {
    prtcpnt.file <- prtcpnt.file[, !drop, with=FALSE]
    prtcpnt.file <- prtcpnt.file[,which(unlist(lapply(prtcpnt.file, function(x)!all(is.na(x))))),with=F]
    dates <- metadata.file[metadata.file$type == 'date']$iri
-   dates <- dates %in% names(prtcpnt.file)
+   dates <- dates[dates %in% names(prtcpnt.file)]
    setDT(prtcpnt.file)[, (dates) := lapply(.SD, as.Date, '%d-%b-%y'), .SDcols = dates]
    masterDataTable <- prtcpnt.file
    prtcpnt.back <- prtcpnt.file
@@ -115,7 +115,7 @@ for (i in 1:length(shinyFiles)) {
       names(file)[names(file) == 'NAME'] <- 'Collection_Id'
     }
     dates <- metadata.file[metadata.file$type == 'date']$iri
-    dates <- dates %in% names(file)
+    dates <- dates[dates %in% names(file)]
     setDT(file)[, (dates) := lapply(.SD, as.Date, '%d-%b-%y'), .SDcols = dates]
 
     if (!is.null(file)) {
