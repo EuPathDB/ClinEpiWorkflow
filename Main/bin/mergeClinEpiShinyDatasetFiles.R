@@ -104,7 +104,11 @@ for (i in 1:length(shinyFiles)) {
         if (uniqueN(file$EUPATH_0015467, na.rm=TRUE) == 1) {
           file$Household_Observation_Id <- NULL
         }
-      } else {
+      #} else {
+      #  file$Household_Observation_Id <- NULL
+      }
+
+      if (nrow(file) == uniqueN(file$Household_Id)) {
         file$Household_Observation_Id <- NULL
       }
     }
