@@ -7,6 +7,7 @@ addDD <- function(FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, N
     
 #LOAD LIBRARIES ###############################################################
 library(tidyverse)
+library(plyr)
 library(readxl)
 ###############################################################################
 
@@ -53,7 +54,7 @@ allVars2 <- merge(allVars, dataDictToMerge, by = "variable", all = T)
 ###############################################################################
 
 #ORDER COLUMNS ################################################################
-allVars2 <- allVars2[c("colOrder","variable","dataFile","keepDiscard",
+allVars2 <- allVars2[,c("colOrder","variable","dataFile","keepDiscard",
                        "definition","category","codebookDescription",
                        "codebookValues","termType","notesForOnt","notesForProvider",
                        "notesForDL","variable_dataFile","uniqueVar","type","example",
@@ -61,3 +62,4 @@ allVars2 <- allVars2[c("colOrder","variable","dataFile","keepDiscard",
                        "uniqueValueCount","timeVarying","percentMissing","flag")]
 ###############################################################################
 }
+
