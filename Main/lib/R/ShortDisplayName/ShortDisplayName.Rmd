@@ -1,0 +1,55 @@
+---
+title: "ShortDisplayNameDev"
+author: "Brianna Lindsay"
+date: "April 15, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+```
+
+Using GEMS conversion file as an example. The objective is to come up with standardized short display names from variable labels that would be more friendly to statistical analysis software. Attempting to use abbrieviate package
+
+```{r import}
+GEMS_conversion <- read_csv("C:/Users/lindsabr/Desktop/Git/ApiCommonData/ApiCommonData/Load/ontology/Gates/GEMS/doc/GEMS_conversion.csv")
+colnames(GEMS_conversion)
+```
+
+Apply abbreviate label column
+```{r cleanup}
+#Remove categories from table and remove unnecessary columns
+Conversion<-GEMS_conversion %>% filter(termType !="category")
+Conversion<-Conversion %>% select(-displayOrder, -dataFile, -parentIRI, -codebookValues)
+```
+
+
+If termType = value then we will need the parent term to help decipher meaning, so create two dataframes with label if termtype != value and with label+parent label if termtype = value.
+```{r termtypes}
+Values <- Conversion[ which(Conversion$termType=='value'), ]
+Variables <- Conversion[ which(Conversion$termType=='variable'), ]
+```
+
+
+Concatenate variable label with parent label, merge back together and abbreviate
+```{r abbreviate}
+Values$LongLabel <-paste(Values$parentLabel,Values$label)
+Variables$LongLabel <-Variables$label
+
+##Combine values and variables data back together
+ConversionNew<-rbind(Values, Variables)
+
+#Variables remove spaces from labels
+searchString <- ' '
+replacementString <- ''
+ConversionNew$LongLabel = gsub(searchString,replacementString,ConversionNew$LongLabel)
+
+#Apply abbreviate function 
+ConversionNew$ShortLabel<-abbreviate(ConversionNew$LongLabel, minlength=12)
+AllLabels<-ConversionNew[c(9,10)]
+kable(AllLabels)
+```
