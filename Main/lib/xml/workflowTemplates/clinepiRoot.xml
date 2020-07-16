@@ -95,6 +95,7 @@
     <prop name="studyName"/>
     <prop name="version"/>
     <prop name="webDisplayOntologyName"/>
+    <prop name="nameForFilenames"/>
     
     <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
@@ -142,6 +143,7 @@
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyDownloadFiles" 
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue> 
+      <paramValue name="nameForFilenames">${nameForFilenames}</paramValue>
       <paramValue name="groupName">${groupName}</paramValue>
       <paramValue name="inputFileBaseName">shiny_downloadDir</paramValue>
       <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
