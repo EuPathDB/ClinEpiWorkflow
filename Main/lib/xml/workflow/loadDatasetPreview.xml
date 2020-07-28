@@ -1,0 +1,40 @@
+<workflowGraph name="datasetLoaderWorkflow">
+    <param name="datasetName"/>
+    <param name="datasetLoaderXmlFileName"/>
+    <param name="parentDataDir"/>
+
+    <constant name="dataDir">$$parentDataDir$$/$$datasetName$$</constant>
+
+    <step name="makeDataDir" stepClass="ReFlow::StepClasses::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="insertDataset" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::DatasetLoaderInsertDataset">
+      <paramValue name="datasetName">$$datasetName$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="getAndUnpack" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::DatasetLoaderGetAndUnpack">
+      <paramValue name="datasetName">$$datasetName$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="insertExtDb" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::DatasetLoaderInsertExtDb" stepLoadTypes="plugin">
+      <paramValue name="datasetName">$$datasetName$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="insertExtDbRls" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::DatasetLoaderInsertExtDbRls" stepLoadTypes="plugin">
+      <paramValue name="datasetName">$$datasetName$$</paramValue>
+      <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+      <depends name="insertExtDb"/>
+    </step>
+
+</workflowGraph>
