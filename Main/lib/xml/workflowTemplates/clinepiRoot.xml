@@ -131,15 +131,6 @@
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"/>
     </step>
 
-    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyWSFiles" 
-          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToWebServices">
-      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="inputFileBaseName">shiny_masterDataTable</paramValue>
-      <paramValue name="relativeWebServicesDir">$$relativeWebServicesDir$$</paramValue>
-      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
-      <depends name="makeProjectReleaseWebServicesDir"/>
-    </step>
-
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyDownloadFiles" 
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue> 
