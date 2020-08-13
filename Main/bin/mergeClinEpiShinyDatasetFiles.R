@@ -115,7 +115,7 @@ for (i in 1:length(shinyFiles)) {
     if (grepl("sample", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Sample_Id'
     }
-    if (grepl("light", shinyFiles[i])) {
+    if (grepl("ento", shinyFiles[i])) {
       names(file)[names(file) == 'NAME'] <- 'Collection_Id'
     }
    #dates <- metadata.file[metadata.file$type == 'date']$iri
@@ -145,7 +145,7 @@ for (i in 1:length(shinyFiles)) {
 	  file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F]
 	  masterDataTable <- merge(masterDataTable, file, by = "Household_Id", allow.cartesian = TRUE)
           idCols <- c('Household_Observation_Id', 'Household_Id', 'Participant_Id')[c('Household_Observation_Id', 'Household_Id', 'Participant_Id') %in% names(file)]
-	} else if (grepl("light", shinyFiles[i])) {
+	} else if (grepl("ento", shinyFiles[i])) {
 	  file$Participant_Id <- NULL
 	  file <- unique(file)
           idCols <- c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id')[c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id') %in% names(file)]
