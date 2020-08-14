@@ -1,5 +1,6 @@
 <workflowGraph name="datasetLoaderWorkflow">
     <param name="datasetName"/>
+    <param name="version"/>
     <param name="datasetLoaderXmlFileName"/>
     <param name="parentDataDir"/>
 
@@ -35,6 +36,12 @@
       <paramValue name="datasetLoaderXmlFileName">$$datasetLoaderXmlFileName$$</paramValue>
       <paramValue name="dataDir">$$dataDir$$</paramValue>
       <depends name="insertExtDb"/>
+    </step>
+
+    <step name="insertStudy" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudy" stepLoadTypes="plugin">
+      <paramValue name="experimentName">$$datasetName$$</paramValue>
+      <paramValue name="experimentExtDbRlsSpec">$$datasetName$$|$$version$$</paramValue>
+      <depends name="insertExtDbRls"/>
     </step>
 
 </workflowGraph>

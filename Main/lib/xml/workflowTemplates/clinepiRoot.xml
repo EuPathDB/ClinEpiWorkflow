@@ -161,6 +161,7 @@
     
     <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDatasetPreview.xml">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="version">${version}</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
       <dependsGlobal name="EuPath_Ontology_RSRC"/> <!-- use Update Eupath ontology class to avoid rerunning DONE ISASimple steps -->
