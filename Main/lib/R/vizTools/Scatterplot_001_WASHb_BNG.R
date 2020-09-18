@@ -87,7 +87,7 @@ d <- merge(p, hh, all.x=T, all.y=T, by=c("pid", "svy"))
 diar.labs <- c("Diarrhea", "No diarrhea")
 names(diar.labs) <- c("Yes", "No")
 
-ggplot(d[!is.na(d$diar),], aes(weight_for_age, height_for_age, color=as.character(svy))) +
+p <- ggplot(d[!is.na(d$diar),], aes(weight_for_age, height_for_age, color=as.character(svy))) +
   geom_point(alpha=0.6, shape=1, size=1) + 
   geom_smooth () +
   xlab("Weight-for-age z-score") +
@@ -95,5 +95,26 @@ ggplot(d[!is.na(d$diar),], aes(weight_for_age, height_for_age, color=as.characte
   labs(color="Timepoint") +
   facet_grid(cols = vars(diar), labeller=labeller(.cols=diar.labs))
 
+p_built <- ggplot_build(p)
+p_built
 
 
+#############################################################
+# pull out data for the smoothed mean
+
+p_data <- p_built$data
+smoothed_mean <- p_data[[2]]
+
+table(smoothed_mean$PANEL, smoothed_mean$colour, useNA="ifany")
+#F8766D, PANEL 1 = timepoint 1, no diarrhea
+#F8766D, PANEL 2 = timepoint 1, diarrhea
+#00BFC4, PANEL 1 = timepoint 2, no diarrhea
+#00BFC4, PANEL 2 = timepoint 2, diarrhea
+
+smoothed_mean$subset <- "timepoint 1, no diarrhea"
+smoothed_mean$subset[smoothed_mean$PANEL==2] <- "timepoint 1, diarrhea"
+smoothed_mean$subset[smoothed_mean$PANEL==1 & smoothed_mean$colour=="#00BFC4"] <- "timepoint 2, no diarrhea"
+smoothed_mean$subset[smoothed_mean$PANEL==2 & smoothed_mean$colour=="#00BFC4"] <- "timepoint 2, diarrhea"
+table(smoothed_mean$subset)
+
+smoothed_mean <- smoothed_mean[,c("subset", "x", "y", "ymin", "ymax", "se")]
