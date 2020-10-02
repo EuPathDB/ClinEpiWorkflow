@@ -35,7 +35,7 @@ updateColNames <- function(colNames) {
 dropUnnecessaryCols <- function(file) {
   file <- suppressWarnings(file[, !drop, with=FALSE])
   if (exists('masterDataTable')) {
-    keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Household_Id' & colnames(file) != 'Participant_Id' & colnames(file) != 'OBI_0001508')
+    keep <- !(colnames(file) %in% colnames(masterDataTable) & colnames(file) != 'Household_Id' & colnames(file) != 'Participant_Id' & colnames(file) != 'Observation_Id' & colnames(file) != 'OBI_0001508')
     file <- file[, keep, with=FALSE]
   }
   file <- file[,which(unlist(lapply(file, function(x)!all(is.na(x))))),with=F] 
@@ -164,6 +164,7 @@ if (any(grepl("sample", shinyFiles))) {
       } else {
         cols <- c(names(sample.file), 'Participant_Id')
       }
+
       masterDataTable <- merge(masterDataTable, sample.file, by = "Observation_Id", all = TRUE)
       sample.file <- unique(masterDataTable[, cols, with=FALSE])
       sample.file <- sample.file[!is.na(sample.file$Sample_Id),]
