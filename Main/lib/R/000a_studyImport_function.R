@@ -311,9 +311,9 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
         #                       stringsAsFactors=F) 
       }
       
-      #for categorical allVars where type == chr or lgl and <20 unique values
+      #for categorical allVars where type == chr or lgl and <50 unique values
       if(length(temp.values[!is.na(temp.values)])>0 & 
-         length(temp.values[!is.na(temp.values)])<=20 & 
+         length(temp.values[!is.na(temp.values)])<=30 & 
          allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("chr", "lgl")){
         temp.df <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles2[i]))), tolower(j), sep="::"),
                               dataSet=STUDY,
@@ -326,7 +326,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
       }
       
       #for categorical allVars where type == chr or lgl (screen out variables with >20 values, as these are likely IDs (PID, sampleID, etc))
-      if(length(temp.values[!is.na(temp.values)])>20 & 
+      if(length(temp.values[!is.na(temp.values)])>30 & 
          allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("chr", "lgl")){
         temp.df <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles2[i]))), tolower(j), sep="::"),
                               dataSet=STUDY,
@@ -334,7 +334,7 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
                               dataFile=tolower(gsub("[.].+$", "", names(dataFiles2[i]))),
                               variable_dataFile=j,
                               file=names(dataFiles2[i]),
-                              values=">20 categories", 
+                              values=">30 categories", 
                               stringsAsFactors=F) 
         if("NA" %in% temp.values[!is.na(temp.values)]){
           temp.df2 <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles2[i]))), tolower(j), sep="::"),
@@ -350,9 +350,9 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
         }
       }
       
-      #for categorical allVars where length of values <= 10 and type == dbl or int or date
-      if(length(temp.values[!is.na(temp.values)])>0 & length(temp.values[!is.na(temp.values)])<=10 & 
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
+      #for categorical allVars where length of values <= 20 and type == dbl or int or date
+      if(length(temp.values[!is.na(temp.values)])>0 & length(temp.values[!is.na(temp.values)])<=20 & 
+         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date", "dbl+lbl")){ 
         temp.df <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles2[i]))), tolower(j), sep="::"),
                               dataSet=STUDY,
                               variable=tolower(j), 
@@ -363,9 +363,9 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
                               stringsAsFactors=F) 
       }
       
-      #for continuous allVars where length of values > 10 and type == dbl or int
-      if(length(temp.values[!is.na(temp.values)])>10 & 
-         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date")){ 
+      #for continuous allVars where length of values > 20 and type == dbl or int
+      if(length(temp.values[!is.na(temp.values)])>20 & 
+         allVars[!is.na(allVars$variable_dataFile) & allVars$variable_dataFile==j & allVars$file==names(dataFiles2)[i], "type"] %in% c("int", "dbl", "date", "dbl+lbl")){ 
         temp.df <- data.frame(uniqueVar=paste(tolower(gsub("[.].+$", "", names(dataFiles2[i]))), tolower(j), sep="::"),
                               dataSet=STUDY,
                               variable=tolower(j), 
