@@ -144,7 +144,7 @@ if (any(grepl("observation", shinyFiles))) {
       obs.file <- obs.file[!is.na(obs.file$Observation_Id),]
       idCols <- c('Observation_Id', 'Participant_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
       obs.file <- makePrettyCols(obs.file, idCols)
-      fwrite(obs.file, 'shiny_downloadDir_observations.txt', sep='\t', na="NA")
+      fwrite(obs.file, file.path(dataDir, 'shiny_downloadDir_observations.txt'), sep='\t', na="NA")
     }
   }
 }
