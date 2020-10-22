@@ -79,7 +79,7 @@ if (any(grepl("household", shinyFiles))) {
     if (!all(names(household.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) {
       if ("EUPATH_0015467" %in% names(household.file)) {
         if (uniqueN(household.file$EUPATH_0015467, na.rm=TRUE) == 1) {
-          file$Household_Observation_Id <- NULL
+          household.file$Household_Observation_Id <- NULL
         }
       }
       if (nrow(household.file) == uniqueN(household.file$Household_Id)) {
