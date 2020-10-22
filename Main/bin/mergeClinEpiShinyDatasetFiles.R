@@ -170,7 +170,7 @@ if (any(grepl("sample", shinyFiles))) {
       sample.file <- sample.file[!is.na(sample.file$Sample_Id),]
       idCols <- c('Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id', 'Collection_Id')
       sample.file <- makePrettyCols(sample.file, idCols)
-      fwrite(sample.file, 'shiny_downloadDir_samples.txt', sep='\t', na="NA")
+      fwrite(sample.file, file.path(dataDir, 'shiny_downloadDir_samples.txt'), sep='\t', na="NA")
     }
   }
 }
@@ -189,7 +189,7 @@ if (any(grepl("ento", shinyFiles))) {
     if (!all(names(ento.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) { 
       idCols <- c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id')
       ento.file <- makePrettyCols(ento.file, idCols)
-      fwrite(ento.file, 'shiny_downloadDir_entomology.txt', sep='\t', na="NA")
+      fwrite(ento.file, file.path(dataDir, 'shiny_downloadDir_entomology.txt'), sep='\t', na="NA")
     }
   }
 }
