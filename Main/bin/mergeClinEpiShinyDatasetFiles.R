@@ -100,6 +100,8 @@ if (any(grepl("community", shinyFiles))) {
   if (nrow(community.file) > 0) {
     names(community.file) <- updateColNames(names(community.file))
     community.file <- dropUnnecessaryCols(community.file)
+    community.file$Household_Id <- NULL
+    community.file <- unique(community.file)
     names(community.file)[names(community.file) == 'EUPATH_0035016'] <- 'OBI_0001508'
     if (!all(names(community.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) {
       mergeByCols <- 'Household_Id'
