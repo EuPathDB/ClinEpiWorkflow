@@ -104,9 +104,9 @@ if (any(grepl("community", shinyFiles))) {
     community.file <- unique(community.file)
     names(community.file)[names(community.file) == 'EUPATH_0035016'] <- 'OBI_0001508'
     if (!all(names(community.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) {
-      mergeByCols <- 'Household_Id'
+      mergeByCols <- 'Community_Id'
       if ('OBI_0001508' %in% names(community.file)) {
-        mergeByCols <- c('Household_Id', 'OBI_0001508')
+        mergeByCols <- c('Community_Id', 'OBI_0001508')
       }
       masterDataTable <- merge(masterDataTable, community.file, by = mergeByCols)
       idCols <- c('Community_Id', 'Household_Observation_Id', 'Household_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
