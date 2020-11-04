@@ -131,7 +131,7 @@ if (any(grepl("observation", shinyFiles))) {
         cols <- names(obs.file)
       }
       mergeByCols <- 'Participant_Id'
-      if ('OBI_0001508' %in% names(obs.file)) {
+      if ('OBI_0001508' %in% names(obs.file) & 'OBI_0001508' %in% names(masterDataTable)) {
         mergeByCols <- c('Participant_Id', 'OBI_0001508')
       }
       if (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable)) {
