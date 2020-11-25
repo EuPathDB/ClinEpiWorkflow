@@ -27,7 +27,9 @@ updateColNames <- function(colNames) {
   colNames <-  gsub(" ", "_", gsub("\\[|\\]", "", colNames))
   colNames[colNames == 'SOURCE_ID'] <- 'Participant_Id'
   colNames[colNames == 'COMMUNITY_ID'] <- 'Community_Id'
+  colNames[colNames == 'COMMUNITY_OBSERVATION_ID'] <- 'Community_Observation_Id'
   colNames[colNames == 'HOUSEHOLD'] <- 'Household_Id'
+  colNames[colNames == 'HOUSEHOLD_OBSERVATION_ID'] <- 'Household_Observation_Id'
 
   return(colNames)
 }
@@ -63,7 +65,7 @@ if ("EUPATH_0000095" %in% names(prtcpnt.file)) { prtcpnt.file$EUPATH_0000095 <- 
 masterDataTable <- prtcpnt.file
 prtcpnt.back <- prtcpnt.file
 ## human readable, sorted columns names and print 
-idCols <- c('Participant_Id', 'Observation_Id', 'Community_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
+idCols <- c('Participant_Id', 'Observation_Id', 'Community_Id', 'Community_Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
 prtcpnt.file <- makePrettyCols(prtcpnt.file, idCols)
 fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participants.txt"), sep='\t', na="NA")
 
@@ -87,7 +89,7 @@ if (any(grepl("household", shinyFiles))) {
       }
       ## allow.cartesian bc multiple house obs per prtcpnt, multiple prtcpnts per house
       masterDataTable <- merge(masterDataTable, household.file, by = 'Household_Id', allow.cartesian = TRUE)
-      idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
+      idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
       household.file <- makePrettyCols(household.file, idCols)
       fwrite(household.file, file.path(dataDir,"shiny_downloadDir_households.txt"), sep='\t', na="NA")
     }
@@ -109,7 +111,7 @@ if (any(grepl("community", shinyFiles))) {
         mergeByCols <- c('Community_Id', 'OBI_0001508')
       }
       masterDataTable <- merge(masterDataTable, community.file, by = mergeByCols)
-      idCols <- c('Community_Id', 'Household_Observation_Id', 'Household_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
+      idCols <- c('Community_Id', 'Community_Observation_Id', 'Household_Observation_Id', 'Household_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
       community.file <- makePrettyCols(community.file, idCols)
       fwrite(community.file, file.path(dataDir,"shiny_downloadDir_community.txt"), sep='\t', na="NA")
     }
@@ -144,7 +146,7 @@ if (any(grepl("observation", shinyFiles))) {
       masterDataTable <- as.data.table(masterDataTable)
       obs.file <- unique(masterDataTable[, cols, with=FALSE])
       obs.file <- obs.file[!is.na(obs.file$Observation_Id),]
-      idCols <- c('Observation_Id', 'Participant_Id', 'Community_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
+      idCols <- c('Observation_Id', 'Participant_Id', 'Community_Id', 'Community_Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
       obs.file <- makePrettyCols(obs.file, idCols)
       fwrite(obs.file, file.path(dataDir, 'shiny_downloadDir_observations.txt'), sep='\t', na="NA")
     }
@@ -170,7 +172,7 @@ if (any(grepl("sample", shinyFiles))) {
       masterDataTable <- merge(masterDataTable, sample.file, by = "Observation_Id", all = TRUE)
       sample.file <- unique(masterDataTable[, cols, with=FALSE])
       sample.file <- sample.file[!is.na(sample.file$Sample_Id),]
-      idCols <- c('Sample_Id', 'Observation_Id', 'Participant_Id', 'Community_Id', 'Household_Observation_Id', 'Household_Id', 'Collection_Id')
+      idCols <- c('Sample_Id', 'Observation_Id', 'Participant_Id', 'Community_Id', 'Community_Observation_Id', 'Household_Observation_Id', 'Household_Id', 'Collection_Id')
       sample.file <- makePrettyCols(sample.file, idCols)
       fwrite(sample.file, file.path(dataDir, 'shiny_downloadDir_samples.txt'), sep='\t', na="NA")
     }
@@ -189,7 +191,7 @@ if (any(grepl("ento", shinyFiles))) {
     ento.file$Participant_Id <- NULL
     ento.file <- unique(ento.file)
     if (!all(names(ento.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) { 
-      idCols <- c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id', 'Community_Id')
+      idCols <- c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id')
       ento.file <- makePrettyCols(ento.file, idCols)
       fwrite(ento.file, file.path(dataDir, 'shiny_downloadDir_entomology.txt'), sep='\t', na="NA")
     }
@@ -200,6 +202,6 @@ if (any(grepl("ento", shinyFiles))) {
 #combined file
 masterDataTable <- as.data.table(masterDataTable)
 masterDataTable <- suppressWarnings(masterDataTable[, !drop, with=FALSE])
-idCols <- c('Participant_Id', 'Observation_Id', 'Community_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
+idCols <- c('Participant_Id', 'Observation_Id', 'Community_Id', 'Community_Observation_Id', 'Household_Id', 'Household_Observation_Id', 'Sample_Id', 'Collection_Id')
 masterDataTable <- makePrettyCols(masterDataTable, idCols)
 fwrite(masterDataTable, file.path(dataDir,"shiny_downloadDir.txt"), sep='\t', na="NA")
