@@ -13,6 +13,7 @@ if (is.null(baseFileName)) {
 metadata.file <- fread(paste0(dataDir, "/ontologyMetadata.txt"))
 dataDict.file <- fread(paste0(dataDir, "/ontologyMapping.txt"))
 names(metadata.file) <- tolower(names(metadata.file))
+names(dataDict.file) <- tolower(names(dataDict.file))
 metadata.file <- merge(metadata.file, dataDict.file, by = "iri", all = TRUE)
 fwrite(metadata.file, file.path(dataDir, "shiny_downloadDir_ontologyMetadata.txt"), sep = '\t', na = "NA")
 
