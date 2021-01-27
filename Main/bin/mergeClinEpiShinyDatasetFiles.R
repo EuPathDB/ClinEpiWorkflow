@@ -63,6 +63,7 @@ prtcpnt.file <- fread(shinyFiles[grepl("participants", shinyFiles)], na.strings 
 names(prtcpnt.file) <- updateColNames(names(prtcpnt.file))
 prtcpnt.file <- dropUnnecessaryCols(prtcpnt.file)
 if ("EUPATH_0000095" %in% names(prtcpnt.file)) { prtcpnt.file$EUPATH_0000095 <- NULL }
+prtcpnt.file$Participant_Id = as.character(prtcpnt.file$Participant_Id);
 masterDataTable <- prtcpnt.file
 prtcpnt.back <- prtcpnt.file
 ## human readable, sorted columns names and print 
@@ -159,6 +160,8 @@ if (any(grepl("observation", shinyFiles))) {
         obs.file$'mergeByTimepoint' <- obs.file$'OBI_0001508'
       }
       if (uniqueN(masterDataTable$Participant_Id) != nrow(masterDataTable)) {
+        # force Participant_Id to character, avoid merge error
+        obs.file$Participant_Id = as.character( obs.file$Participant_Id, TRUE);
         temp <- merge(prtcpnt.back, obs.file, by = "Participant_Id")
         masterDataTable <- rbind.fill(masterDataTable, temp)
         masterDataTable <- unique(masterDataTable)
@@ -195,6 +198,7 @@ if (any(grepl("sample", shinyFiles))) {
         cols <- c(names(sample.file), 'Participant_Id')
       }
 
+      sample.file$Participant_Id = as.character(sample.file$Participant_Id);
       masterDataTable <- merge(masterDataTable, sample.file, by = "Observation_Id", all = TRUE)
       sample.file <- unique(masterDataTable[, cols, with=FALSE])
       sample.file <- sample.file[!is.na(sample.file$Sample_Id),]
