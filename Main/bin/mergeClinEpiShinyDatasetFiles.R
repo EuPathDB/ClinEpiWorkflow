@@ -101,7 +101,7 @@ if (any(grepl("household", shinyFiles))) {
       masterDataTable <- merge(masterDataTable, household.file, by = mergeByCols, allow.cartesian = TRUE)
       idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
       if( 'mergyByTimepoint' %in% names(household.file)){
-        # household.file$'mergeByTimepoint' <- NULL
+        household.file$'mergeByTimepoint' <- NULL
       }
       household.file <- makePrettyCols(household.file, idCols)
       fwrite(household.file, file.path(dataDir,"shiny_downloadDir_households.txt"), sep='\t', na="NA")
