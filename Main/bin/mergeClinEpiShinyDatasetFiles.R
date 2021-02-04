@@ -59,7 +59,7 @@ makePrettyCols <- function(file, idCols) {
 
 
 #participants start here since its something we always have
-prtcpnt.file <- fread(shinyFiles[grepl("participants", shinyFiles)], na.strings = c("N/A", "na", ""))
+prtcpnt.file <- fread(shinyFiles[grepl("participants", shinyFiles)], na.strings = c("NA", "N/A", "na", ""))
 names(prtcpnt.file) <- updateColNames(names(prtcpnt.file))
 prtcpnt.file <- dropUnnecessaryCols(prtcpnt.file)
 if ("EUPATH_0000095" %in% names(prtcpnt.file)) { prtcpnt.file$EUPATH_0000095 <- NULL }
@@ -74,7 +74,7 @@ fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participants.txt"), se
 
 #households
 if (any(grepl("household", shinyFiles))) {
-  household.file <- fread(shinyFiles[grepl("household", shinyFiles)], na.strings = c("N/A", "na", ""))
+  household.file <- fread(shinyFiles[grepl("household", shinyFiles)], na.strings = c("NA", "N/A", "na", ""))
   if (nrow(household.file) > 0) {
     names(household.file) <- updateColNames(names(household.file)) 
     names(household.file)[names(household.file) == 'NAME'] <- 'Household_Observation_Id'
@@ -89,8 +89,10 @@ if (any(grepl("household", shinyFiles))) {
       if (nrow(household.file) == uniqueN(household.file$Household_Id)) {
         household.file$Household_Observation_Id <- NULL
       }
+      flagRemoveTempCol = FALSE 
       mergeByCols <- 'Household_Id' # participants have it, so masterDataTable has it
       if('EUPATH_0044122' %in% names(household.file)) {
+        flagRemoveTempCol = TRUE
         household.file$'mergeByTimepoint' <- household.file$'EUPATH_0044122'
         if('mergeByTimepoint' %in% names(masterDataTable)){ # which it will not be, so why bother?
           mergeByCols <- c('Household_Id', 'mergeByTimepoint')
@@ -99,10 +101,12 @@ if (any(grepl("household", shinyFiles))) {
       ## allow.cartesian bc multiple house obs per prtcpnt, multiple prtcpnts per house
       print("Merging household");
       masterDataTable <- merge(masterDataTable, household.file, by = mergeByCols, allow.cartesian = TRUE)
-      idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
-      if( 'mergyByTimepoint' %in% names(household.file)){
-        household.file$'mergeByTimepoint' <- NULL
+      if( flagRemoveTempCol == TRUE ){
+        household.file$"mergeByTimepoint" <- NULL
       }
+      else{
+      }
+      idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
       household.file <- makePrettyCols(household.file, idCols)
       fwrite(household.file, file.path(dataDir,"shiny_downloadDir_households.txt"), sep='\t', na="NA")
     }
@@ -111,16 +115,18 @@ if (any(grepl("household", shinyFiles))) {
 
 #community
 if (any(grepl("community", shinyFiles))) {
-  community.file <- fread(shinyFiles[grepl("community", shinyFiles)], na.strings = c("N/A", "na", ""))
+  community.file <- fread(shinyFiles[grepl("community", shinyFiles)], na.strings = c("NA", "N/A", "na", ""))
   if (nrow(community.file) > 0) {
     names(community.file) <- updateColNames(names(community.file))
     community.file <- dropUnnecessaryCols(community.file)
     # community.file$Household_Id <- NULL
     community.file <- unique(community.file)
+    flagRemoveTempCol = FALSE 
     # names(community.file)[names(community.file) == 'EUPATH_0035016'] <- 'OBI_0001508'
     # if (!all(names(community.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) {
       mergeByCols <- 'Community_Id' # if communities exist, then households exist and they are in masterDataTable and have Community_Id
       if ('EUPATH_0035016' %in% names(community.file)) {
+        flagRemoveTempCol = TRUE
       # add the timepoint merging column
         if('mergeByTimepoint' %in% names(masterDataTable)){
           mergeByCols <- c('Community_Id', 'mergeByTimepoint')
@@ -130,7 +136,7 @@ if (any(grepl("community", shinyFiles))) {
       print("Merging community");
       masterDataTable <- merge(masterDataTable, community.file, by = mergeByCols)
       # remove the timepoint merging column before writing
-      if( 'mergyByTimepoint' %in% names(community.file)){
+      if( flagRemoveTempCol == TRUE ){
         community.file$'mergeByTimepoint' <- NULL
       }
       idCols <- c('Community_Id', 'Community_Observation_Id', 'Household_Observation_Id', 'Household_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
@@ -142,11 +148,12 @@ if (any(grepl("community", shinyFiles))) {
 
 #observations
 if (any(grepl("observation", shinyFiles))) {
-  obs.file <- fread(shinyFiles[grepl("observation", shinyFiles)], na.strings = c("N/A", "na", ""))
+  obs.file <- fread(shinyFiles[grepl("observation", shinyFiles)], na.strings = c("NA","N/A", "na", ""))
   if (nrow(obs.file) > 0) {
     names(obs.file) <- updateColNames(names(obs.file))
     names(obs.file)[names(obs.file) == 'NAME'] <- 'Observation_Id'
     obs.file <- dropUnnecessaryCols(obs.file)
+    flagRemoveTempCol = FALSE 
     if (!all(names(obs.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) {
       ##this basically tests for house obs in master table
       if ('Household_Id' %in% names(masterDataTable)) {
@@ -156,6 +163,7 @@ if (any(grepl("observation", shinyFiles))) {
       }
       mergeByCols <- 'Participant_Id'
       if ('OBI_0001508' %in% names(obs.file)) {
+        flagRemoveTempCol = TRUE
         if('mergeByTimepoint' %in% names(masterDataTable)){
           mergeByCols <- c('Participant_Id', 'mergeByTimepoint')
         }
@@ -187,7 +195,7 @@ if (any(grepl("observation", shinyFiles))) {
 
 #samples
 if (any(grepl("sample", shinyFiles))) {
-  sample.file <- fread(shinyFiles[grepl("sample", shinyFiles)], quote="", na.strings = c("N/A", "na", ""))
+  sample.file <- fread(shinyFiles[grepl("sample", shinyFiles)], quote="", na.strings = c("NA", "N/A", "na", ""))
   if (nrow(sample.file) > 0) {
     names(sample.file) <- updateColNames(names(sample.file))
     names(sample.file)[names(sample.file) == 'OBSERVATION_ID'] <- 'Observation_Id'
@@ -214,7 +222,7 @@ if (any(grepl("sample", shinyFiles))) {
 
 #entomology
 if (any(grepl("ento", shinyFiles))) {
-  ento.file <- fread(shinyFiles[grepl("ento", shinyFiles)], quote="", na.strings = c("N/A", "na", ""))
+  ento.file <- fread(shinyFiles[grepl("ento", shinyFiles)], quote="", na.strings = c("NA", "N/A", "na", ""))
   if (nrow(ento.file) > 0) {
     names(ento.file) <- updateColNames(names(ento.file))
     names(ento.file)[names(ento.file) == 'OBSERVATION_ID'] <- 'Observation_Id'
@@ -233,7 +241,7 @@ if (any(grepl("ento", shinyFiles))) {
 
 #combined file
 if('mergeByTimepoint' %in% names(masterDataTable)) {
-  masterDataTable$'mergeByTimepoint' <- NULL
+  masterDataTable$mergeByTimepoint <- NULL
 }
 masterDataTable <- as.data.table(masterDataTable)
 masterDataTable <- suppressWarnings(masterDataTable[, !drop, with=FALSE])
