@@ -201,45 +201,45 @@ studyImport <- function(FOLDER, TYPE, STUDY, MISSING, DATE_TIME, PARTICIPANT_ID)
   }
   rm(i, j, temp.values, all.values)
   
-  #############################################################
-  # add "timeVarying" column to allVars
-  
-  allVars$timeVarying <- NA
-  
-  for(i in allVars$uniqueVar){
-    
-    if(PARTICIPANT_ID!="not applicable"){
-      
-      print(i)
-      variable <- unique(allVars$variable[allVars$uniqueVar==i])
-      dataFile <- unique(allVars$file[allVars$uniqueVar==i])
-      
-      if(variable %in% tolower(names(dataFiles[[dataFile]]))){
-        temp <- dataFiles[[dataFile]]
-        names(temp) <- tolower(names(temp))
-        temp2 <- temp[,c(PARTICIPANT_ID, variable)]
-        temp2 <- distinct(temp2[!is.na(temp2[,variable]),]) 
-        
-        if(length(temp2[,variable])>0){
-          temp3 <- data.frame(table(temp2[,PARTICIPANT_ID]))
-          
-          if(max(temp3$Freq)==1){
-            allVars$timeVarying[allVars$uniqueVar==i] <- "once"
-          }
-          if(max(temp3$Freq)>1){
-            allVars$timeVarying[allVars$uniqueVar==i] <- "repeated"
-          }
-        }
-        
-        if(length(temp2[,variable])==0){
-          allVars$timeVarying[allVars$uniqueVar==i] <- "no data"
-        }
-      }
-      rm(temp, temp2, temp3)
-    }
-  }
-  
-  rm(i)
+  # #############################################################
+  # # add "timeVarying" column to allVars
+  # 
+  # allVars$timeVarying <- NA
+  # 
+  # for(i in allVars$uniqueVar){
+  #   
+  #   if(PARTICIPANT_ID!="not applicable"){
+  #     
+  #     print(i)
+  #     variable <- unique(allVars$variable[allVars$uniqueVar==i])
+  #     dataFile <- unique(allVars$file[allVars$uniqueVar==i])
+  #     
+  #     if(variable %in% tolower(names(dataFiles[[dataFile]]))){
+  #       temp <- dataFiles[[dataFile]]
+  #       names(temp) <- tolower(names(temp))
+  #       temp2 <- temp[,c(PARTICIPANT_ID, variable)]
+  #       temp2 <- distinct(temp2[!is.na(temp2[,variable]),]) 
+  #       
+  #       if(length(temp2[,variable])>0){
+  #         temp3 <- data.frame(table(temp2[,PARTICIPANT_ID]))
+  #         
+  #         if(max(temp3$Freq)==1){
+  #           allVars$timeVarying[allVars$uniqueVar==i] <- "once"
+  #         }
+  #         if(max(temp3$Freq)>1){
+  #           allVars$timeVarying[allVars$uniqueVar==i] <- "repeated"
+  #         }
+  #       }
+  #       
+  #       if(length(temp2[,variable])==0){
+  #         allVars$timeVarying[allVars$uniqueVar==i] <- "no data"
+  #       }
+  #     }
+  #     rm(temp, temp2, temp3)
+  #   }
+  # }
+  # 
+  # rm(i)
   
 
   #############################################################
