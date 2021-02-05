@@ -121,7 +121,7 @@ if (any(grepl("household", shinyFiles))) {
       }
       ## allow.cartesian bc multiple house obs per prtcpnt, multiple prtcpnts per house
       print("Merging household");
-      masterDataTable <- merge(masterDataTable, household.file, by = mergeByCols, all.x=T, all.y=T)#allow.cartesian = TRUE)
+      masterDataTable <- merge(masterDataTable, household.file, by = mergeByCols, allow.cartesian = T) # all.x=T, all.y=T)#
       idCols <- c('Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id', 'Participant_Id', 'Observation_Id', 'Sample_Id', 'Collection_Id')
      # if( flagRemoveTempCol == TRUE ){
       if('mergeByTimepoint' %in% names(household.file)){
@@ -229,7 +229,7 @@ if (any(grepl("observation", shinyFiles))) {
       # force Participant_Id to character, avoid merge error
       obs.file$Participant_Id = as.character( obs.file$Participant_Id, TRUE);
       if (uniqueN(masterDataTable$Participant_Id) < nrow(masterDataTable)) { #need to map participant info into every observation
-        myVector <- c("Household_Id", "Community_Id", non_long_c, non_long_hh)
+        myVector <- unique(c("Household_Id", "Community_Id", non_long_c, non_long_hh))
         prtcpnt.back <- merge(prtcpnt.back, 
                               unique(masterDataTable[, ..myVector]), 
                               by="Household_Id", 
