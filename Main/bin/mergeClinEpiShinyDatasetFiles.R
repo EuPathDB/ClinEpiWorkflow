@@ -73,6 +73,7 @@ prtcpnt.file <- makePrettyCols(prtcpnt.file, idCols)
 fwrite(prtcpnt.file, file.path(dataDir,"shiny_downloadDir_participants.txt"), sep='\t', na="NA")
 
 
+non_long_hh <- NULL 
 #households
 if (any(grepl("household", shinyFiles))) {
   household.file <- fread(shinyFiles[grepl("household", shinyFiles)], na.strings = c("N/A", "na", ""))
@@ -108,6 +109,7 @@ if (any(grepl("household", shinyFiles))) {
                                 temp, by="Household_Id", all.x=T, all.y=T)
         
         household.file <- household.file[!is.na(household.file$'EUPATH_0044122'),]
+        non_long_hh <- non_long
       }
       
 ####################      
@@ -133,13 +135,13 @@ if (any(grepl("household", shinyFiles))) {
     }
   }
 }
-non_long_hh <- non_long
 
 
 
 
 
 
+non_long_c <- NULL
 #community
 #Community study timepoint = EUPATH_0035016
 if (any(grepl("community", shinyFiles))) {
@@ -171,6 +173,7 @@ if (any(grepl("community", shinyFiles))) {
                               temp, by="Community_Id", all.x=T, all.y=T)
       
       community.file <- community.file[!is.na(community.file$'EUPATH_0035016'),]
+      non_long_c <- non_long
     }
     ####################    
     flagRemoveTempCol = FALSE 
@@ -199,7 +202,6 @@ if (any(grepl("community", shinyFiles))) {
     }
   }
 }
-non_long_c <- non_long
 
 #observations
 if (any(grepl("observation", shinyFiles))) {
