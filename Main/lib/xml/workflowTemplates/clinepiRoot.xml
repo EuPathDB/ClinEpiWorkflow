@@ -102,9 +102,78 @@
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
-      <dependsGlobal name="EuPath_Ontology_RSRC"/> <!-- use Update Eupath ontology class to avoid rerunning DONE ISASimple steps -->
+<!-- EDA TODO add dependency Ontology_entityTypesAndProtocols_RSRC -->
+      <dependsGlobal name="Ontology_entityTypesAndProtocols_RSRC"/> <!-- use Update Eupath ontology class to avoid rerunning DONE ISASimple steps -->
+<!--
+      <dependsGlobal name="EuPath_Ontology_RSRC"/> 
+-->
     </subgraph>
 
+<!-- insert PERMUTATION and possibly other ontology synonym attributes -->
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
+    	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+      <paramValue name="attributesFile">ontologySynonymAttributes.txt</paramValue>
+      <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+    </step>
+
+
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
+    	<paramValue name="plugin">ApiCommonData::Load::Plugin::InsertEntityGraph</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+<!--
+    	<paramValue name="dateObfuscationFile">dateObfuscation.txt</paramValue>
+    	<paramValue name="investigationBaseName">investigation.xml</paramValue>
+    	<paramValue name="isSimpleConfiguration">1</paramValue>
+    	<paramValue name="ontologyMappingFile">${webDisplayOntologyName}</paramValue>
+    	<paramValue name="ontologyMappingOverrideFileBaseName">ontologyMapping.xml</paramValue>
+    	<paramValue name="valueMappingFile">valueMap.txt</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+  -->
+  <!-- do not need to specify? 
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    	<paramValue name="commit">$$commit$$</paramValue>
+    	<paramValue name="extDbRlsSpec">$$extDbRlsSpec$$</paramValue>
+    	<paramValue name="metaDataRoot">$$metaDataRoot$$</paramValue>
+  -->
+      <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
+    </step>
+
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadAttributesFromEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
+    	<paramValue name="plugin">ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+
+
+  <!-- do not need to specify? 
+    	<paramValue name="ontologyExtDbRlsSpec">OntologyTerm_${webDisplayOntologyName}_RSRC</paramValue>
+  -->
+  <!-- do not need to specify? 
+    	<paramValue name="extDbRlsSpec">$$extDbRlsSpec$$</paramValue>
+    	<paramValue name="logDir">$$logDir$$</paramValue>
+    	<paramValue name="commit">$$commit$$</paramValue>
+  -->
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertEntityGraph"/>
+    </step>
+    
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadEntityTypeAndAttributeGraphs" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
+    	<paramValue name="plugin">ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadAttributesFromEntityGraph"/>
+    </step>
+    
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadDatasetSpecificEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
+    	<paramValue name="plugin">ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadEntityTypeAndAttributeGraphs"/>
+    </step>
+
+<!-- deprecated in EDA
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
@@ -112,6 +181,7 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
     </step>
+--> 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_studyCharacteristics"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudyCharacteristics">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
@@ -122,7 +192,7 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 
-
+<!-- TODO
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeClinEpiShinyDatasetFiles">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
@@ -133,7 +203,7 @@
 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyDownloadFiles" 
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
-      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue> 
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="nameForFilenames">${nameForFilenames}</paramValue>
       <paramValue name="groupName">${groupName}</paramValue>
       <paramValue name="inputFileBaseName">shiny_downloadDir</paramValue>
@@ -141,7 +211,7 @@
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
       <depends name="makeProjectReleaseDownloadDir"/>
     </step>
-
+-->
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
       <paramValue name="projectName">${projectName}</paramValue>
@@ -159,19 +229,28 @@
     <prop name="version"/>
     <prop name="nameForFilenames"/>
     
-    <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDatasetPreview.xml">
+    <subgraph name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC" xmlFile="loadDataset.xml">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="version">${version}</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
-      <dependsGlobal name="EuPath_Ontology_RSRC"/> <!-- use Update Eupath ontology class to avoid rerunning DONE ISASimple steps -->
+<!--
+      <dependsGlobal name="EuPath_Ontology_RSRC"/>
+-->
     </subgraph>
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertStudy" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudy" stepLoadTypes="plugin">
+      <paramValue name="experimentName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="experimentExtDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
+    </step>
+<!-- deprecated in EDA
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="tables">RecordCount</paramValue>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
+--> 
 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
