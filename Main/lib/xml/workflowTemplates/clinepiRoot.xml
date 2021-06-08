@@ -70,11 +70,11 @@
       <paramValue name="datasetName">OntologyTerm_${name}_RSRC</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
-      <dependsGlobal name="Ontology_Relationship_Types_RSRC"/>
+      <dependsGlobal name="Ontology_entityTypesAndProtocols_RSRC"/>
     </subgraph>
   </datasetTemplate>
 
-
+<!-- DEPRECATED, this step does not fit into the EDA paradigm
   <datasetTemplate class="UpdateWebDisplayOntologyClinEpi">
     <prop name="name"/>
     <prop name="version"/>
@@ -87,6 +87,7 @@
       <depends name="OntologyTerm_${name}_RSRC"/>
     </subgraph>
   </datasetTemplate>
+-->
 
   <datasetTemplate class="ISASimpleClinEpi">
     <prop name="projectName"/>
@@ -109,15 +110,32 @@
 -->
     </subgraph>
 
-<!-- insert PERMUTATION and possibly other ontology synonym attributes -->
-    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
+<!-- Add column values to SRes.OntologySynonym plural, permutation, flags -->
+
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_entities" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
     	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
-      <paramValue name="attributesFile">ontologySynonymAttributes.txt</paramValue>
+      <paramValue name="attributesFile">entities.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
     </step>
-
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_ordinals" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
+    	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+      <paramValue name="attributesFile">ordinals.txt</paramValue>
+      <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
+    </step>
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_owlAttributes" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
+    	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+      <paramValue name="attributesFile">owlAttributes.txt</paramValue>
+      <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
+    </step>
 
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
     	<paramValue name="plugin">ApiCommonData::Load::Plugin::InsertEntityGraph</paramValue>
@@ -211,7 +229,6 @@
       <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
       <depends name="makeProjectReleaseDownloadDir"/>
     </step>
--->
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
       <paramValue name="projectName">${projectName}</paramValue>
@@ -219,7 +236,9 @@
       <paramValue name="relativeManualDeliveryDir">${subProjectName}/${groupName}/${studyName}/${version}/final/downloadSiteFiles</paramValue>
       <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
       <depends name="makeProjectReleaseDownloadDir"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
+-->
   </datasetTemplate>
   <datasetTemplate class="ISASimpleClinEpiPreview">
     <prop name="projectName"/>
