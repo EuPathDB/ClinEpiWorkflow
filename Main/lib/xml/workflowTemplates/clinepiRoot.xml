@@ -118,7 +118,7 @@
       <paramValue name="attributesFile">entities.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
-      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_ordinals" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
     	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
@@ -126,7 +126,7 @@
       <paramValue name="attributesFile">ordinals.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
-      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_owlAttributes" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::UpdateOntologySynonym" stepLoadTypes="plugin">
     	<paramValue name="plugin">GUS::Supported::Plugin::InsertOntologySynonymAttributes</paramValue>
@@ -134,7 +134,7 @@
       <paramValue name="attributesFile">owlAttributes.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
-      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.getAndUnpack"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
@@ -176,6 +176,9 @@
     	<paramValue name="commit">$$commit$$</paramValue>
   -->
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertEntityGraph"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_entities"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_ordinals"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_owlAttributes"/>
     </step>
     
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadEntityTypeAndAttributeGraphs" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
