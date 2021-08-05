@@ -213,25 +213,26 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 
-<!-- TODO
-    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"
-          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeClinEpiShinyDatasetFiles">
-      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="outputFileBaseName">shiny</paramValue>
-      <paramValue name="owlFile">$GUS_HOME/ontology/release/production/${webDisplayOntologyName}.owl</paramValue>
-      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"/>
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_makeEntityDownloadFiles" 
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA">
+    	<paramValue name="plugin">ApiCommonData::Load::Plugin::MakeEntityDownloadFiles</paramValue>
+      <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
+      <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="outputDir"></paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadDatasetSpecificEntityGraph"/>
     </step>
 
-    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyDownloadFiles" 
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_copyEntityDownloadFiles" 
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
-      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue> 
       <paramValue name="nameForFilenames">${nameForFilenames}</paramValue>
-      <paramValue name="groupName">${groupName}</paramValue>
-      <paramValue name="inputFileBaseName">shiny_downloadDir</paramValue>
+      <paramValue name="inputFileBaseName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
-      <depends name="${subProjectName}_${groupName}_${studyName}_RSRC_shinyTables"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_makeEntityDownloadFiles"/>
       <depends name="makeProjectReleaseDownloadDir"/>
     </step>
+
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
       <paramValue name="projectName">${projectName}</paramValue>
@@ -241,8 +242,9 @@
       <depends name="makeProjectReleaseDownloadDir"/>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
--->
+
   </datasetTemplate>
+
   <datasetTemplate class="ISASimpleClinEpiPreview">
     <prop name="projectName"/>
     <prop name="subProjectName"/>
