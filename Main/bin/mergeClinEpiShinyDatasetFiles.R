@@ -308,6 +308,25 @@ if (any(grepl("ento", shinyFiles))) {
     ento.file <- dropUnnecessaryCols(ento.file)
     ento.file$Participant_Id <- NULL
     ento.file <- unique(ento.file)
+
+  ## merge
+    mergeByCols <- 'Household_Id'
+    flagRemoveTempCol = FALSE 
+    if('EUPATH_0020003' %in% names(household.file)) {
+      flagRemoveTempCol = TRUE
+      ento.file$'mergeByTimepoint' <- household.file$'EUPATH_0020003'
+      if('mergeByTimepoint' %in% names(masterDataTable)){ # which it will not be, so why bother?
+        mergeByCols <- c('Household_Id', 'mergeByTimepoint')
+      }
+    }
+    ## allow.cartesian bc multiple house obs per prtcpnt, multiple prtcpnts per house
+    print("Merging entomology");
+    masterDataTable <- merge(masterDataTable, ento.file, by = mergeByCols, allow.cartesian = T, all=T)
+  ## done merging
+    if( flagRemoveTempCol == TRUE ){
+      ento.file$'mergeByTimepoint' <- NULL
+    }
+
     if (!all(names(ento.file) %in% c("Household_Id", "Participant_Id", "Observation_Id"))) { 
       idCols <- c('Collection_Id', 'Sample_Id', 'Observation_Id', 'Participant_Id', 'Household_Observation_Id', 'Household_Id', 'Community_Id', 'Community_Observation_Id')
       ento.file <- makePrettyCols(ento.file, idCols)
