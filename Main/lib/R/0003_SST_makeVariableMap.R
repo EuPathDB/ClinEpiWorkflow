@@ -1,4 +1,4 @@
-makeVariableMap <- function(allVar, OUTPUT) {
+makeVariableMap <- function(allVars, OUTPUT) {
 
 #Removes all variables marked as "discard". Adds columns for label, IRI, 
 #parentLabel, and parentIRI. Removes columns max and min. 
@@ -15,7 +15,7 @@ makeVariableMap <- function(allVar, OUTPUT) {
 #parentLabel and parentIRI to help place the new category in the hierarchy.
 
 #REMOVE VARIABLES MARKED AS "DISCARD" #########################################
-varMap <- allVar[!(allVar$keepDiscard == "discard"),]
+varMap <- allVars[!(allVars$keepDiscard == "discard"),]
 ###############################################################################
 
 #INITIALIZE NEW COLUMNS #######################################################
