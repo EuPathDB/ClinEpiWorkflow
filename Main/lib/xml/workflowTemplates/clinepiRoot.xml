@@ -181,6 +181,14 @@
       <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
       <depends name="makeProjectReleaseDownloadDir"/>
     </step>
+    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_studyCharacteristics"
+          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudyCharacteristics">
+      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
+      <paramValue name="file">$GUS_HOME/ontology/General/study_classifications/ini</paramValue>
+      <paramValue name="owlFile">$GUS_HOME/ontology/release/production/classifications.owl</paramValue>
+      <paramValue name="commit">1</paramValue>
+      <depends name="OntologyTerm_classifications_RSRC"/>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
+    </step>
   </datasetTemplate>
-
 </workflowGraph>
