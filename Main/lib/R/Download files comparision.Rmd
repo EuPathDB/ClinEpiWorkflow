@@ -1,0 +1,271 @@
+---
+title: "Dowload file comparision"
+author: "Weilu Song"
+date: "8/9/2021"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+    - \usepackage{caption}
+---
+
+```{r setup, include=FALSE}
+pacman::p_load(
+  "haven",
+  "readr",
+  "kableExtra",
+  "tidyverse" ,
+  "labelled",
+  "compareDF",
+  "arsenal",
+  "dplyr",
+  "janitor",
+  "stringr"
+)
+```
+
+# ICEMR_PRISM_Cohort \
+
+d(1,2,3,4,5,6)n represent New download files, d(1,2,3,4,5,6)o represent old download files. \
+
+## 1. ISASimple_ICEMR_PRISM_cohort_RSRC_Entomology_collections \
+  
+**Brief description:** \
+\
+Most differences are caused by changed labels (such as removing () for count labels), but they share the same IRI and values. There is only one differences between new and old files, the column name called "Household_Id". \
+
+Columns with Different value: \
+
+|Obs   |Column's name(New) |Column's name (old) |Value (New vs. Old)| Identity|
+|:---  |:---              |:---              |:---  |:---    |
+|1     |Household_Id      |Household_Id      | h_103004301 / HH324003501| No|    
+
+\
+*More details are showed below:* \
+
+
+a. Not compatible:  \
+  Cols in old but not new: `Collection_Id`, `Anopheles.dissected.for.parity..count...EUPATH_0000194.`, `Anopheles.nulliparous..count...EUPATH_0000195.`, `Anopheles.parous..count...EUPATH_0000196.`, `Total.Anopheles.tested..EUPATH_0000217.`, `Total.Anopheles.pos..EUPATH_0000218.` \
+  \
+  Cols in new but not old: `Entomology_Id`, `Sporozoite.pos.Anopheles.count..EUPATH_0000218.`, `Anopheles.nulliparous.count..EUPATH_0000195.`, `Anopheles.parous.count..EUPATH_0000196.`, `Anopheles.dissected.for.parity.count..EUPATH_0000194.`, \
+ `Anopheles.tested.for.sporozoites.count..EUPATH_0000217.` \
+ 
+  b. Not compatible: \
+  Some variables DO NOT share the same format (eg. Numeric vs.Character). \
+  
+```{r, echo=F}
+df1n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_Entomology_collections.txt")
+#str(df1n)
+#df1n[with(df1n,order(Household_Id)),]
+#head(df1n)
+
+df1o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_entomology.txt")
+#str(df1o)
+#df1o[with(df1o,order(Household_Id)),]
+#head(df1o)
+all_equal(df1n, df1o)
+compare_df_cols(df1n, df1o)
+```
+
+```{r, echo=F}
+ide<-function(a, b){
+  x<-identical(sort(a), sort(b))
+  print(paste("The columns'value of new dataset and old dataset is identical:", x))
+}
+#ide(df1n$Household_Id, df1o$Household_Id)
+#ide(df1n$Entomology_Id,df1o$Collection_Id)
+```
+\
+
+## 2. ISASimple_ICEMR_PRISM_cohort_RSRC_Households \
+
+**Brief description:** \
+\
+  New download files has **9** different columns and **7** new established columns.Two columns share the same IRI and value but not labels. In new download file, the "ParentLabel" is IRI but not label's name.\
+  
+  |Obs   |Column's name(New) |Column's name (old) |Value (New vs. Old)| Identity|
+  |:---|:---|:---|:---|:--- |
+  |1     |Sleeping rooms in dwelling count [EUPATH_0000025]     |Sleeping rooms in dwelling [EUPATH_0000025]     | same | Yes|  
+  |2     |Persons living in house count [EUPATH_0000019] | Persons living in house [EUPATH_0000019]| same| Yes|
+  |3| Geographic location [GAZ_00000448]|-|-|-|
+|4| Dwelling facilities [EUPATH_0000302]|-|-|-|
+|5| Dwelling characteristics [EUPATH_0000303]|-|-|-|
+|6| Food security [EUPATH_0011683]|-|-|-|
+|7| Socioeconomic status [EUPATH_0011932]|-|-|-|
+|8| Socioeconomic factors [EUPATH_0000304]|-|-|-|
+|9| Assets [EUPATH_0000144]|-|-|-|
+
+\
+*More details are showed below:* \
+a. Different number of columns \
+    The number of cols in new one are 52, whereas in old one are 43.\
+    Cols in new but not old: \
+    "Assets..EUPATH_0000144.", "Dwelling.characteristics..EUPATH_0000303.",\
+    "Dwelling.facilities..EUPATH_0000302.",   "Food.security..EUPATH_0011683.",\
+    "Geographic.location..GAZ_00000448.", " Household.water..EUPATH_0000731.",
+    \
+    "Persons.living.in.house.count..EUPATH_0000019. " Sleeping.rooms.in.dwelling.count..EUPATH_0000025.", 
+    \
+    "Socioeconomic.factors..EUPATH_0000304.","Socioeconomic.status..EUPATH_0011932.", \
+    "Waste.disposal..EUPATH_0000596", \
+    Cols in old but not new: \
+  "Sleeping.rooms.in.dwelling..EUPATH_0000025."," Persons.living.in.house..EUPATH_0000019." \ 
+  
+b. Not compatible: \
+  Some variables DO NOT share the same format (eg. Numeric vs.Character). \
+  
+```{r, echo=F}
+df2n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_Households.txt")
+#str(df1n)
+#df1n[with(df1n,order(Household_Id)),]
+#head(df2n)
+
+df2o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_Households.txt")
+#str(df1o)
+#df1o[with(df1o,order(Household_Id)),]
+all_equal(df2n, df2o)
+compare_df_cols(df2n, df2o)
+
+ide<-function(a, b){
+  x<-identical(sort(a), sort(b))
+  print(paste("The columns'value of new dataset and old dataset is identical:", x))
+}
+#ide(df2n$Sleeping.rooms.in.dwelling.count..EUPATH_0000025., df2o$Sleeping.rooms.in.dwelling..EUPATH_0000025.)
+#ide(df2n$Persons.living.in.house.count..EUPATH_0000019.,df2o$Persons.living.in.house..EUPATH_0000019.)
+```
+\
+
+
+## 3. ISASimple_ICEMR_PRISM_cohort_RSRC_ontologyMetadata \
+
+**Brief description:** \
+In New download file, it has 16 variables, in old download file, it has 15 variables. The column that did not appeared old download file is called **"median"**. In addition to that, some variables DO NOT share the same format (eg. Numeric vs.Character) \
+
+More details are showned below: \ 
+
+```{r, echo=F}
+df3n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_ontologyMetadata.txt")
+
+#str_extract(pccmit$Description, "(?<=GN=).*(?= PE)")
+#str(df1n)
+#df1n[with(df1n,order(Household_Id)),]
+
+df3o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_ontologyMetadata.txt")
+#str(df1o)
+#df1o[with(df1o,order(Household_Id)),]
+
+all_equal(df3n, df3o)
+compare_df_cols(df3n, df3o)
+#summary(comparedf(df1n,df1o))
+```
+
+\
+
+## 4.ISASimple_ICEMR_PRISM_cohort_RSRC_Participants
+
+**Brief description:** \
+ For column's label, there is no difference between new and old download files. Some differences caused by format in two files are showed as follow:\
+ 
+|Obs   |Column's name | Identity|Note|
+|:---   |:---  |:---   |:---       |
+ |1| Age at enrollment [EUPATH_0000120] |No| Different decimal|
+|2| Alpha-thalassemia genotype [EUPATH_0000034] |Yes| - |
+|3|Birth date [EFO_0004950]|No|-|dd/mm/yyyy vs.dd-dec-yy|
+|4|Cause of death [EUPATH_0020001] | Yes| All "NA"|
+|5|CD36 genotype [EUPATH_0000737] |Yes| -|
+|6|Death date [EUPATH_0000150]|No|format of date|
+|7|Enrollment date [EUPATH_0000151] |No|dd/mm/yyyy vs.dd-dec-yy
+|8|G6PD genotype [EUPATH_0000033] |Yes|-|
+|9|HbS genotype [EUPATH_0000035] |Yes|-|
+|10|Household_Id |No|h_vs. HH|
+|11|Last date observed [EUPATH_0000152] |No|format of date|
+|12|Participant_Id |Yes|-|
+|13|Place of death [EUPATH_0010067] |Yes|-|
+|14|Sex [PATO_0000047] |Yes |-|
+|15| Timing of enrollment [EUPATH_0000219] |Yes |-|
+
+\
+
+*More details are showed below:* \
+```{r, echo=F}
+df4n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_Participants.txt")
+#str(df4n)
+df4o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_participants.txt")
+#str(df4o)
+all_equal(df4n, df4o)
+compare_df_cols(df4n, df4o)
+#summary(comparedf(df4n,df4o))
+
+ide<-function(a, b){
+  x<-identical(sort(a), sort(b))
+  print(paste("The columns'value of new dataset and old dataset is identical:", x))
+}
+ide(df4n$Age.at.enrollment..EUPATH_0000120., df4o$Age.at.enrollment..EUPATH_0000120.)
+
+#setdiff(df4n$Alpha.thalassemia.genotype..EUPATH_0000034.,df4o$Alpha.thalassemia.genotype..EUPATH_0000034.)
+#setdiff(df4n$Timing.of.enrollment..EUPATH_0000219., df4o$Timing.of.enrollment..EUPATH_0000219.)
+
+```
+
+\
+
+## 5.ISASimple_ICEMR_PRISM_cohort_RSRC_samples
+
+**Brief description:** \
+ In new download file, only **2** columns share the same labels. and IRI. \
+
+|Obs   |Column's name(New) |Column's name (old) |Value (New vs. Old)| Identity|
+|:---  |:---               |:---                |:---               |:---     |
+|1|    Sample_Id           |Sample_Id           |                   |Yes|  
+|2| Repeated_measure_Id    |Observation_Id      |                   |No|
+|3|  Participant_Id        |Participant_Id      |                   |Yes|
+|4|Household_Id            |Household_Id        |h_ vs.HH    | No|
+|5|Plasmodium[EUPATH_0000092]                  |-   | NA| from obs.file| 
+|6|Plasmodium, by LAMP [EUPATH_0000487]                       |-   | NA| from obs.file| 
+|7|Plasmodium [EUPATH_0000207]      |-   | NA|from obs.file| 
+|8|Plasmodium asexual stages,[EUPATH_0000048]  |-   | NA| from obs.file| 
+|9|Hemoglobin [EUPATH_0000047]                                |-   | NA| from obs.file| 
+
+\
+*More details are showned below:* \
+```{r, echo=F}
+df5n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_Samples.txt")
+df5o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_samples.txt")
+all_equal(df5n, df5o)
+compare_df_cols(df5n, df5o)
+#summary(comparedf(df4n,df4o))
+
+  
+ide<-function(a, b){
+  x<-identical(sort(a), sort(b))
+  print(paste("The columns'value of new dataset and old dataset is identical:", x))
+}
+
+# setdiff(df5n$Participant_Id, df5o$Participant_Id)
+```
+
+
+
+## 6.ISASimple_ICEMR_PRISM_cohort_RSRC_Repeated_measures (new) v.s.ISASimple_ICEMR_PRISM_cohort_RSRC_observations (old)
+**Brief description:** \
+Main differences were caused harmonized change, such as pulling out unit, etc. Lalel"severe malaria criteria" is changed to "severe malaria signs", adding label "Anthropometry [EUPATH_0000649]" in new download file, other than that, no significant differences were detected. \
+
+|Obs   |Column's name(New) |Column's name (old) | Identity|
+|:---  |:---               |:---                |:---     |
+ |1| Complicated malaria signs [EUPATH_0020254]|Basis of complicated diagnosis [EUPATH_0000316]|Yes |
+ |2| Repeated_measure_Id |Observation_Id|Yes |
+ |3| severe malaria signs |severe malaria criteria|Yes |
+ |4| Anthropometry [EUPATH_0000649] | -|NA|
+ \
+
+*More details are showed below:* \
+```{r, echo=F}
+df6n<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/new/ISASimple_ICEMR_PRISM_cohort_RSRC_Repeated_measures.txt")
+#str(df4n)
+df6o<-read.delim("/Users/aaronwlsong/Desktop/QA_Checking/PRISM_Cohort_RSRC/old/ISASimple_ICEMR_PRISM_cohort_RSRC_observations.txt")
+#str(df6o)
+all_equal(df6n, df6o)
+compare_df_cols(df6n, df6o)
+#summary(comparedf(df6n,df6o))
+#setdiff(df6n$Complicated.malaria.signs..EUPATH_0020254., df6o$Basis.of.complicated.diagnosis..EUPATH_0000316.)
+```
