@@ -1,4 +1,4 @@
-makeVariableMap <- function(allVars, OUTPUT) {
+makeVariableMap <- function(ALLVARS, OUTPUT) {
 
 #Removes all variables marked as "discard". Adds columns for label, IRI, 
 #parentLabel, and parentIRI. Removes columns max and min. 
@@ -14,26 +14,29 @@ makeVariableMap <- function(allVars, OUTPUT) {
 #where the new parentLabel is placed under the "label" column and fill out 
 #parentLabel and parentIRI to help place the new category in the hierarchy.
 
-#REMOVE VARIABLES MARKED AS "DISCARD" #########################################
-varMap <- allVars[!(allVars$keepDiscard == "discard"),]
-###############################################################################
-
-#INITIALIZE NEW COLUMNS #######################################################
-newCol <- c("IRI", "label", "parentIRI", "parentLabel")
-varMap[,newCol] <- ""
-###############################################################################
-
-#ORDER COLUMNS ################################################################
-varMap <- varMap[c("colOrder","variable","dataFile","IRI","label",
-                     "definition","category","codebookDescription",
-                     "codebookValues","termType","parentIRI","parentLabel","notesForOnt",
-                     "notesForProvider","notesForDL","variable_dataFile","uniqueVar",
-                     "type","example","dateTime","formatCode","values",
-                     "uniqueValueCount","percentMissing","flag")]
-###############################################################################
-
-#SAVE UPDATED ALLVARIABLES FILE ###############################################
-write.csv(varMap, OUTPUT, row.names = F)
-###############################################################################
-
+varMap <- allVars %>%
+  filter(keepDiscard != "discard") %>% #remove variables marked as "discard"
+  replace(is.na(.), "") %>% #remove all NAs
+  mutate(IRI = "",
+           label = "",
+           parentIRI = "",
+           parentLabel = "",
+           repeated = "", 
+           is_temporal = "",
+           mergeKey = "",
+           unitLabel = "",
+           unitIRI= "",
+           is_featured = "",
+           hidden = "",
+           scale = "",
+           defaultDisplayRangeMin = "",
+           defaultDisplayRangeMax = "",
+           defaultBinWidth = ""
+           ) %>% #initialize new columns
+  select(colOrder:dataFile, IRI:label, definition:category, 
+         parentIRI:parentLabel, codebookDescription:notesForDL, 
+         repeated:mergeKey, dataSet, unitLabel:defaultBinWidth, type:flag,
+         variable_dataFile, uniqueVar) #reorder and drop keepDiscard
+  
+write.csv(varMap, OUTPUT, row.names = F) #save the new variableMap file
 }

@@ -1,65 +1,41 @@
-addDD <- function(FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, NOTESFORDL) {
+addDD <- function(ALLVARS, FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, NOTESFORDL) {
 
 #use allVariables file to generate an updated allVariables file with information
-#from the data dictionary merged in (especially codebookDescription and 
+#from the data dictionary merged in, especially codebookDescription and 
 #codebookValues. The new file will follow the format of the SOP and can be 
 #manually edited to indicate keep/discard 
     
-#LOAD LIBRARIES ###############################################################
+#load libraries
 library(tidyverse)
 library(plyr)
 library(readxl)
-###############################################################################
 
-#INITIALIZE NEW COLUMNS #######################################################
-newCol <- c("keepDiscard","definition","category","termType",
-            "notesForOnt","notesForProvider")
-allVars[,newCol] <- ""
-###############################################################################
-
-#MERGE IN DATA DICTIONARY INFORMATION #########################################
-#create list of data dictionaries
+#read in and create single data dictionary file from multiple files
 if(TYPE==".txt"){
-    filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
-    dataDict <- lapply(filenames, read.delim, header = T, as.is=T)
-}
+    dataDictionary <- list.files(path=FOLDER, pattern=TYPE, full.names=T) %>% 
+        map_dfr(read_delim)}
 if(TYPE==".csv"){
-    filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
-    dataDict <- lapply(filenames, read.csv, as.is=T, na.strings="")
-}
+    dataDictionary <- list.files(path=FOLDER, pattern=TYPE, full.names=T) %>% 
+        map_dfr(read_csv)}
 if(TYPE==".xls"){
-    filenames <- list.files(path=FOLDER, pattern=TYPE, full.names=T)
-    dataDict <- lapply(filenames, read_xls)
+    dataDictionary <- list.files(path=FOLDER, pattern=TYPE, full.names=T) %>% 
+        map_dfr(read_xls)}
+
+#rename key variables in dataDictionary, join with allVars file, and reorder
+allvars2 <- dataDictionary %>% 
+    select(variable = VARIABLE, 
+        codebookDescription = CODEBOOKDESCRIPTION,
+        codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL) %>% #select and rename the columns
+    mutate_all(as.character) %>%                #convert all columns to character 
+    mutate(variable = tolower(variable)) %>%    #make variable all lower case 
+    full_join(ALLVARS, by = "variable") %>%     #merge dataDictionary with allVars
+    mutate(keepDiscard = "",
+           definition = "",
+           category = "",
+           termType = "",
+           notesForOnt = "",
+           notesForProvider = "") %>%       #initialize additional columns
+    select(colOrder, variable, dataFile, keepDiscard:category, 
+           codebookDescription:codebookValues, termType:notesForProvider, 
+           notesForDL:dataSet, variable_dataFile, type:formatCode,values:flag) #reorder variables and drop unneeded ones
 }
-
-
-rm(filenames)
-
-#rename variables to be merged and cut dataDict files down to those core variables
-for(i in 1:length(dataDict)){
-    dataDict[[i]] <- select(dataDict[[i]],variable = VARIABLE, 
-                            codebookDescription = CODEBOOKDESCRIPTION,
-                            codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL)    
-}
-
-dataDict2 <- lapply(dataDict, mutate_all,as.character) #converts all columns in all files to character 
-#merge data dictionary files together
-dataDictToMerge <- ldply(dataDict2, data.frame)
-head(dataDictToMerge)
-
-dataDictToMerge$variable <- tolower(dataDictToMerge$variable)
-
-#merge data dictionary with allVars file
-allVars2 <- merge(allVars, dataDictToMerge, by = "variable", all = T)
-###############################################################################
-
-#ORDER COLUMNS ################################################################
-allVars2 <- allVars2[,c("colOrder","variable","dataFile","keepDiscard",
-                       "definition","category","codebookDescription",
-                       "codebookValues","termType","notesForOnt","notesForProvider",
-                       "notesForDL","variable_dataFile","uniqueVar","type","example",
-                       "dateTime","formatCode","values",
-                       "uniqueValueCount","timeVarying","percentMissing","flag")]
-###############################################################################
-}
-

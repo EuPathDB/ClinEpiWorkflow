@@ -1,0 +1,139 @@
+---
+title: "Template for Sheena's R functions"
+author: "Sheena Tomko"
+date: "Aug 31, 2021"
+output: html_document
+---
+
+# Introduction
+The following R markdown file contains information on what each of my functions does, followed by template code you can update and run that calls said functions. To start run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file that contains the data, a valueMap, and an allVariables file.
+
+
+## Template 0002_SST_add_data_dictionary
+
+This function:
+1) adds data dictionary information to allVariables file, including the codebookDescription, codebookValues, and notes
+2) formats the allVariables file to follow the SOP 
+
+Requirements:
+1) the data dictionaries must be in a folder on their own
+2) they must be in csv, txt or xls format (1 tab only) 
+3) they must have the same headers in each file
+
+After running the function, go through the csv file created and manually indicate whether to "keep" or "discard" variables
+
+```{r 0002 add data dictionary}
+
+load("R_output/001.provide_allVars.RData") # Load your allVars R file made with Danica's studyImport script
+ALLVARS <- allVars      #use the allVars file in your global environment
+FOLDER <- "R_output/dataDictionary"     #folder containing data dictionaries
+TYPE <- ".csv"          #must be ".csv",".txt", or ".xls"
+VARIABLE <- "Variable name"     #data dictionary column containing variable names
+CODEBOOKDESCRIPTION <- "Variable description" #data dictionary column containing variable descriptions
+CODEBOOKVALUES <- "Format values" #data dictionary column containing possible values
+NOTESFORDL <- "Missing values" #data dictionary column containing anything else you might want to import
+OUTPUT <- "./R_output/provide_allVariables_v1.csv" #where to save the updated allVariables file
+
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0002_SST_add_data_dictionary.R")      #load the function
+
+allVars2 <- addDD(ALLVARS, FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOKVALUES, NOTESFORDL) #run the function
+
+# If multiple files contain the same variable, you will get every possible permutation of variable, codebookDescription, codebookValues, etc. The following line of code is a crude way to clean that up.
+allVars3 <- distinct(allVars2)
+# The following line will remove any rows where there was a line in the data dictionary that did not map to any variables in the allVariables file
+allVars4 <- allVars3[is.na(allVars3$dataFile) == F,]
+
+# Save your updated allVariables file. Then go through manually to decide where to "keep" or "discard"
+write.csv(allVars4, OUTPUT, row.names = F)
+```
+
+
+## Template 0003_SST_makeVariableMap
+
+This function:
+1) removes all variables marked as "discard" but leaves everything 
+else
+2) adds columns for label, IRI, parentLabel, parentIRI, repeated, is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, and defaultBinWidth
+3) removes the columns keepDiscard, max, and min to make a starter variableMap file
+
+After running the function, go through the updated file manually and:
+1) For known variables - fill out label, IRI, termType, and repeated
+2) For new variables - fill out the label, termType, category, parentLabel, parentIRI, and repeated
+3) Create a new row for any new multifilters/categories (new parentLabel with no matching parentIRI yet). Place the parentLabel under label and fill out termType, category, parentLabel, and parentIRI to help place the new category in the hierarchy.
+4) For all variables, assess whether is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, and defaultBinWidth should be completed
+
+for termType: multifilter = multifilter category, value = multifilter value, variable = maps to a variable, category = no data values.
+
+```{r 0003 make variableMap}
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0003_SST_makeVariableMap.R") #load the function
+ALLVARS <- read.csv("./R_output/provide_allVariables_v1.csv", as.is = T) #load the allVariables file where you've marked variables to keep/discard
+OUTPUT <- "./R_output/provide_variableMap_v1.csv" #where to save the new variableMap file
+makeVariableMap(ALLVARS, OUTPUT) #run the function, which writes a csv file for you
+```
+
+## Template 0004_SST_update_variableMap
+
+This function:
+1) cleans up and removes NAs from the file
+2) removes quotations from around labels and parentLabels that were copy/pasted from Protege
+3) Removes all extra columns that don’t belong in the variableMap file that goes to the ontology team
+
+After running the function:
+1) decide whether you will be using "variable" or "uniqueVar" to represent variables and update the file manually accordingly
+    a) if using uniqueVar, delete the variable column and rename uniqueVar to variable
+    b) if using variable, delete the uniqueVar column 
+2) send to the ontology team via Git
+
+```{r 0004 update variableMap}
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0004_SST_update_variableMap.R") #load the function
+VARMAP <- read.csv("./R_output/provide_variableMap_v2.csv", as.is = T) #load the variableMap file that you've been editing
+OUTPUT <- "./R_output/provide_variableMap.csv" #where to save the updated file
+varMap <- updateVariableMap(VARMAP) #run the function
+
+#if removing uniqueVar, use this code
+varMap <- varMap %>% 
+    select(-uniqueVar)
+
+#if using uniqueVar and removing variable, use this code
+varMap <- varMap %>% 
+    select(-variable, variable = uniqueVar)
+
+write.csv(varMap, OUTPUT, row.names = F)
+```
+
+## Template 0005_SST_update_valueMap
+
+This function:
+1) removes discarded variables from the valueMap file 
+2) if a variable was marked as boolean by Danica's script, it maps 0 to "No" and 1 to "Yes"
+3) removes duplicate rows if values differ only in capitalization
+
+After running the function:
+1) update the variable and variable2 columns to both use either "variable" or "uniqueVar" depending on what you used in the variableMap file
+2) check in R to see if variables marked as continuous can be dropped
+3) Check in R to see if variables marked as >30 categories (potentially free text fields) can be dropped
+4) Manually (or in R) update value mapping as needed
+
+```{r 0005 update valueMap}
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0005_SST_update_valueMap.R") #load function
+load(file = "001.provide_allVars.RData") #load the valueMap Danica's script generated
+ALLVARS <- read.csv("./R_output/provide_allVariables_v2.csv", as.is = T) #load the allVariables file that indicated which variables to keep/discard
+OUTPUT <- "./R_output/provide_valueMap_v1.txt" #indicate where to save the valueMap file
+valueMap2 <- updateValueMap(valueMap, ALLVARS) #run function
+
+#if using variable, use this code
+valueMap2 <- valueMap2 %>% 
+    mutate(variable2 = variable) %>% #create variable2 column
+    relocate(variable2, .before = values) %>% #move variable2
+    select(-uniqueVar) %>% #remove uniqueVar
+    distinct(variable, values, .keep_all = T) #remove duplicate rows if not using uniqueVar
+
+#if using uniqueVar, use this code
+valueMap2 <- valueMap2 %>% 
+    mutate(variable2 = uniqueVar) %>% #create variable2 column
+    relocate(variable2, .before = values) %>% #move variable2
+    select(-variable, variable = uniqueVar) #replace variable with uniqueVar
+
+write.table(valueMap2, OUTPUT, sep = "\t", quote = F, row.names = F)
+```
+

@@ -1,4 +1,4 @@
-updateVariableMap <- function(varMap, OUTPUT) {
+updateVariableMap <- function(VARMAP) {
     
     # After manual edits to varMap file, this cleans up and removes NAs from  
     # final file. It removes any quotations from around labels and parent labels 
@@ -8,38 +8,18 @@ updateVariableMap <- function(varMap, OUTPUT) {
     # You still need to decide whether to use variable or uniqueVar going forward
     # and update the file manually accordingly.
     
-    #LOAD LIBRARIES ###############################################################
+    #load libraries
     library(purrr)
     library(plyr)
     library(dplyr)
-    ###############################################################################
-
-    #REMOVE QUOTATIONS ############################################################
-    varMap$label <- gsub("^'", "", varMap$label)
-    varMap$label <- gsub("'$", "", varMap$label)
-    varMap$parentLabel <- gsub("^'", "", varMap$parentLabel)
-    varMap$parentLabel <- gsub("'$", "", varMap$parentLabel)
-    ###############################################################################
     
-    #ORDER COLUMNS ################################################################
-    varMap2 <- varMap[c("colOrder","variable","uniqueVar","dataFile","IRI","label",
-                         "definition","category","parentLabel", "parentIRI",
-                         "codebookDescription","codebookValues","termType",
-                         "notesForOnt")]
-    ###############################################################################
-    
-    #REMOVE NA ####################################################################
-    for(i in 1:ncol(varMap2)){
-        varMap2[,i] <- as.character(varMap2[,i])
-        varMap2[,i][is.na(varMap2[,i])] <- ""
-    } #Changes NAs to empty cells
-    ###############################################################################
-    
-    #SAVE UPDATED ALLVARIABLES FILE ###############################################
-    write.csv(varMap2, OUTPUT, row.names = F)
-    ###############################################################################
-    
-    varMap2
+    varMap <- VARMAP %>% 
+        mutate(label = str_replace(label,"'$", "")) %>%  #remove ' at end of labels
+        mutate(parentLabel = str_replace(parentLabel,"'$", "")) %>%  #remove ' at end of parentLabels
+        mutate(colOrder = as.character(colOrder)) %>% #change colOrder to character
+        select(-c(notesForProvider, notesForDL, type:variable_dataFile)) %>% #remove cols the ontology team doesn't need
+        relocate(uniqueVar, .before = dataFile) %>% 
+        replace(is.na(.), "") #remove all NAs 
 }
 
 
