@@ -1,0 +1,142 @@
+---
+title: "Dowload file comparision: study's name"
+author: "Author's name"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+    - \usepackage{caption}
+---
+
+```{r setup, include=FALSE}
+pacman::p_load(
+  "haven",
+  "readr",
+  "kableExtra",
+  "tidyverse" ,
+  "labelled",
+  "compareDF",
+  "arsenal",
+  "dplyr",
+  "janitor",
+  "stringr"
+)
+```
+
+* Note:
+   * d(1,2,3,4,5,6)n represent New download files (as "x" in R result), d(1,2,3,4,5,6)o represent old download files (as "y" in R result).
+   * Column's name has been splitted by label (words) and IRI (OntologyID) \
+
+\
+
+There are xx  download files in new folder and xx files in old folder, the details are as follow: \
+
+|Obs   |File's name (New)         |File's name (old) | #obs (new/old)  |#cols (new/old)|
+|:---: |:---                      |:---              | :---       |:---   |
+|1     |...Communities.txt        | ...Communities.txt | 7960 / 7960 | 5 / 4 | 
+|2     |...Households.txt         |...households.txt|  7722 / 21402 | 23 / 34 |
+|3     |...ontologyMetadata.txt   |...ontologyMetadata.txt| 94 / 96 | 16 / 15 |  
+|4     |...participants.txt       | ...participants.txt| 13754 / 13574 | 14 / 13 |  
+|5     |...Participants_rp_measures.txt  |...observations.txt| 40722 / 40722 | 27 / 27 |  
+|6     |...Household_repeated_measures.txt    |      | 21402 / - | 12 / - | 
+|7     |...RSRC.txt               |...RSRC.txt| 106378 / 40722 | 73 / 74 | 
+
+\
+\newpage
+
+## 1. RSRC fiels \
+
+* Brief description: #can replace based on R result...
+  * No substantial changes are detected in these two download files.
+  * Var "age" and "Country" are changed IRIs, but they have the same values. 
+  * New download file contains many NA value. 
+
+
+```{r, echo=F}
+#clear exsited dataset
+rm(list=ls()) 
+#loading datasets
+df1n<-read.delim("/Users/aaronwlsong/Desktop/EDA_ClinEpiWorkflow/2_QA_Checking/7_washb_kenya/new/ISASimple_Gates_WASHb_Kenya_rct_RSRC.txt")
+df1o<-read.delim("/Users/aaronwlsong/Desktop/EDA_ClinEpiWorkflow/2_QA_Checking/7_washb_kenya/old/ISASimple_Gates_WASHb_Kenya_rct_RSRC.txt")
+```
+
+### Display different col's name in new and old files \
+
+```{r echo=F}
+#Compare new and old file' col's name
+all_equal(df1n, df1o) # if the two datasets have different rows, it only generates the number of rows for each dataset, otherwise, it shows uncompatible cols. 
+compare_df_cols(df1n, df1o) #detect the difference of cols name b/w new and old file
+```
+
+
+### Display the different IRI \
+```{r echo=F, include = FALSE, message=F, warning=F}
+#retreive IRI from col's name
+colnames1<-lst(df1n,df1o) %>%
+          map_dfr(~ tibble(name = names(.x), Class = map_chr(.x, class)), 
+          .id = 'grp')%>% #extract colnames from new and old files
+                  unnest(name) %>%
+          separate(name,into=c("label", "IRI"), 
+              sep='\\.\\.', convert = TRUE, extra = "merge")
+
+#mannually change unsecessfully retrieved IRIs, this is bc the col's name has spaces, and R converts all spaces and special character "[" as .. or ..., therefore, some IRIs are subset inaccurately.I just referred dataset"colnmaes1" to copy those IRIs and change them manually. Usually it wont have too many. 
+colnames1n<-colnames1%>% 
+          mutate(
+          IRI=case_when(IRI=="days...OBI_0001169."                                                                 ~"OBI_0001169.",
+                        IRI=="using.median.weight.and.median.length.or.height..EUPATH_0035071."                    ~"EUPATH_0035071.",
+                        IRI=="caregiver.report..EUPATH_0035108."                                                   ~"EUPATH_0035108.",
+                        TRUE~IRI)
+        )%>%
+        mutate(IRI=ifelse(is.na(IRI), label, IRI) ) #fill in col's name for those vars which do not have IRI.
+
+irin1<-colnames1n %>%
+      filter(grp=="df1n")%>%
+      select(IRI)
+irio1<-colnames1n%>%
+      filter(grp=="df1o")%>%
+      select(IRI)
+#compare different IRI
+setdiff(irin1,irio1)  #In new file but not in old file  
+setdiff(irio1,irin1)  #In old file but not in new file
+```
+
+
+```{r echo=F}
+#Step3. Display the different IRI vars and check their value. I just copied the IRI that I want to display from the result of "setdiff(df1, df2).
+diffiri1<-colnames1n %>%
+  filter(IRI %in% c(
+    "Timepoint"	,
+    "Household_Observation_Id",
+    "Observation_Id",
+    "EUPATH_0000579.",
+    "ENVO_00000004.",
+    ))%>%
+  select(grp, label, IRI)%>%
+  spread(key=grp,value=IRI)%>%
+  print
+```
+
+### Check the value for different IRI vars
+
+```{r echo=F}
+sumvar<-function(x){
+  s<-summary(x)
+  return(s)
+}
+```
+
+**a. var: Country**
+```{r echo=F}
+sumvar(df1n$Country..ENVO_00000009.)
+sumvar(df1o$Country..ENVO_00000004.)
+```
+
+**b. var: age** 
+```{r echo=F} 
+# for continious vars, if the mean, min, max are all same, then I assume they are the same.
+sumvar(df1n$Age..days...OBI_0001169.)
+sumvar(df1o$Age..days...EUPATH_0000579.)
+```
+\newpage
+
