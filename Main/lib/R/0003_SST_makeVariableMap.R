@@ -13,6 +13,9 @@ makeVariableMap <- function(ALLVARS, OUTPUT) {
 #that map to known ontology terms. Create a new row for any new parentLabels 
 #where the new parentLabel is placed under the "label" column and fill out 
 #parentLabel and parentIRI to help place the new category in the hierarchy.
+  
+  #load libraries
+  library(tidyverse)
 
 varMap <- ALLVARS %>%
   filter(keepDiscard != "discard") %>% #remove variables marked as "discard"
