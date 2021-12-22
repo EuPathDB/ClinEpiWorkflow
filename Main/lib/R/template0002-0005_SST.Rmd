@@ -60,7 +60,7 @@ After running the function, go through the updated file manually and:
 1) For known variables - fill out label, IRI, termType, and repeated
 2) For new variables - fill out the label, termType, category, parentLabel, parentIRI, and repeated
 3) Create a new row for any new multifilters/categories (new parentLabel with no matching parentIRI yet). Place the parentLabel under label and fill out termType, category, parentLabel, and parentIRI to help place the new category in the hierarchy.
-4) For all variables, assess whether is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, and defaultBinWidth should be completed
+4) For all variables, assess whether is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, defaultBinWidth, and forceStringType should be completed
 
 for termType: multifilter = multifilter category, value = multifilter value, variable = maps to a variable, category = no data values.
 
