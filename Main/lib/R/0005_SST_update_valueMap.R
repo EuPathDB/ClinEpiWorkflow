@@ -4,9 +4,7 @@ updateValueMap <- function(valueMap, ALLVARS) {
 # valueMapping as needed
 
 #load libraries
-library(purrr)
-library(plyr)
-library(dplyr)
+library(tidyverse)
 
 toKeep <- ALLVARS %>% 
     filter(keepDiscard != "discard") #remove variables marked as "discard" from allVars
