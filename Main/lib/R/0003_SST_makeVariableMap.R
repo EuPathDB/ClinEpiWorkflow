@@ -34,11 +34,12 @@ varMap <- ALLVARS %>%
            scale = "",
            defaultDisplayRangeMin = "",
            defaultDisplayRangeMax = "",
-           defaultBinWidth = ""
+           defaultBinWidth = "",
+           forceStringType = ""
            ) %>% #initialize new columns
   select(colOrder:dataFile, IRI:label, definition:category, 
          parentIRI:parentLabel, codebookDescription:notesForDL, 
-         repeated:mergeKey, dataSet, unitLabel:defaultBinWidth, type:flag,
+         repeated:mergeKey, dataSet, unitLabel:forceStringType, type:flag,
          variable_dataFile, uniqueVar) #reorder and drop keepDiscard
   
 write.csv(varMap, OUTPUT, row.names = F) #save the new variableMap file
