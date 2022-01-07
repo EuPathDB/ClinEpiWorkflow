@@ -6,8 +6,22 @@ output: html_document
 ---
 
 # Introduction
-The following R markdown file contains information on what each of my functions does, followed by template code you can update and run that calls said functions. To start run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file that contains the data, a valueMap, and an allVariables file.
+The following R markdown file contains information on what each of my functions does, followed by template code you can update and run that calls said functions. To start, run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file that contains the data, a valueMap, and an allVariables file.
 
+## Template 0002a_WL_convert_xlsx_dd_1_sheet
+
+This function will take an xlsx file with multiple sheets and transform it into a single csv file with all rows bound together.
+
+```{r 0002a convert xlsx dd to single sheet}
+
+EXCELDATADICT <- "./data/datadictionary/dataDict.xlsx" #path of the multisheet xlsx data dictionary
+OUTPUT <- "./data/datadictionary/dataDict.csv" #where to save the updated single sheet data dictionary
+
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0002a_WS_convert_xlsx_dd_1_sheet.R")      #load the function
+
+dataDict <- xl_sheet_dataDict(EXCELDATADICT) #run the function
+write.csv(dataDict, OUTPUT, row.names = F) #save updated data dictionary as single csv file
+```
 
 ## Template 0002_SST_add_data_dictionary
 
