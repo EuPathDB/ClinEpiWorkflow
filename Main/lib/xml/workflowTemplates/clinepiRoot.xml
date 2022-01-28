@@ -203,6 +203,7 @@
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA">
     	<paramValue name="plugin">ApiCommonData::Load::Plugin::MakeEntityDownloadFiles</paramValue>
       <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
+      <paramValue name="fileBasename">${groupName}_${studyName}</paramValue>
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
       <paramValue name="outputDir"></paramValue>
