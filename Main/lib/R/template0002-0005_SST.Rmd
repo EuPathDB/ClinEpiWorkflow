@@ -6,8 +6,22 @@ output: html_document
 ---
 
 # Introduction
-The following R markdown file contains information on what each of my functions does, followed by template code you can update and run that calls said functions. To start run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file that contains the data, a valueMap, and an allVariables file.
+The following R markdown file contains information on what each of my functions does, followed by template code you can update and run that calls said functions. To start, run 000a_studyImport_function.R and save the RData file. This will generate a preliminary file that contains the data, a valueMap, and an allVariables file.
 
+## Template 0002a_WL_convert_xlsx_dd_1_sheet
+
+This function will take an xlsx file with multiple sheets and transform it into a single csv file with all rows bound together.
+
+```{r 0002a convert xlsx dd to single sheet}
+
+EXCELDATADICT <- "./data/datadictionary/dataDict.xlsx" #path of the multisheet xlsx data dictionary
+OUTPUT <- "./data/datadictionary/dataDict.csv" #where to save the updated single sheet data dictionary
+
+source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0002a_WS_convert_xlsx_dd_1_sheet.R")      #load the function
+
+dataDict <- xl_sheet_dataDict(EXCELDATADICT) #run the function
+write.csv(dataDict, OUTPUT, row.names = F) #save updated data dictionary as single csv file
+```
 
 ## Template 0002_SST_add_data_dictionary
 
@@ -60,7 +74,7 @@ After running the function, go through the updated file manually and:
 1) For known variables - fill out label, IRI, termType, and repeated
 2) For new variables - fill out the label, termType, category, parentLabel, parentIRI, and repeated
 3) Create a new row for any new multifilters/categories (new parentLabel with no matching parentIRI yet). Place the parentLabel under label and fill out termType, category, parentLabel, and parentIRI to help place the new category in the hierarchy.
-4) For all variables, assess whether is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, and defaultBinWidth should be completed
+4) For all variables, assess whether is_temporal, mergeKey, unitLabel, unitIRI, is_featured, hidden, scale, defaultDisplayRangeMin, defaultDisplayRangeMax, defaultBinWidth, and forceStringType should be completed
 
 for termType: multifilter = multifilter category, value = multifilter value, variable = maps to a variable, category = no data values.
 

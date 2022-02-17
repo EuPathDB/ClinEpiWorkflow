@@ -14,7 +14,6 @@
     <paramValue name="projectName">$$projectName$$</paramValue>
   </step>
 
-
  <subgraph name="Ontology_Relationship_Types_RSRC" xmlFile="loadDataset.xml">
     <paramValue name="datasetName">Ontology_Relationship_Types_RSRC</paramValue>
     <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
@@ -36,6 +35,11 @@
     <depends name="EuPath_Ontology_RSRC"/>
   </subgraph>
 
+  <subgraph name="Ontology_entityTypesAndProtocols_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
+    <paramValue name="datasetName">Ontology_entityTypesAndProtocols_RSRC</paramValue>
+    <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+  </subgraph>
 
 
 </workflowGraph>

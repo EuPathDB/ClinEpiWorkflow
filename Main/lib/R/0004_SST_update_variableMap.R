@@ -9,9 +9,7 @@ updateVariableMap <- function(VARMAP) {
     # and update the file manually accordingly.
     
     #load libraries
-    library(purrr)
-    library(plyr)
-    library(dplyr)
+    library(tidyverse)
     
     varMap <- VARMAP %>% 
         mutate(label = str_replace(label,"'$", "")) %>%  #remove ' at end of labels
