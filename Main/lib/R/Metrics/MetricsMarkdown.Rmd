@@ -1,0 +1,235 @@
+---
+title: "ClinEpi Metrics"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo=TRUE}
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(rio)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+
+
+integer_breaks <- function(n = 5, ...) {
+  fxn <- function(x) {
+    breaks <- floor(pretty(x, n, ...))
+    names(breaks) <- attr(breaks, "labels")
+    breaks
+  }
+  return(fxn)
+}
+
+
+#set colors
+powderblue <- "#c6dfe3"
+teal <- "#0d5970"
+pink <- "#f0c1c6"
+lavender <- "#e8e8e8"
+darkorange <- "#fe6d0e"
+darkturquoise <- "#05adda"
+yellowgreen <- "#7cc044"
+gainsboro <- "e2e2e2"
+
+allColors <- c(teal, powderblue, pink, darkorange, darkturquoise, yellowgreen)
+
+createdColors <- c("#0D5970", "#3381C1", "#F94E56", "#FB898D", "#F6C865", lavender)
+
+mainDir<- "/Users/swever/Documents/GitHub/sproutsOcean/ClinEpiMetrics"
+dataDir <- paste0(mainDir, "/data/", sep = "")
+reportDir <- paste0(mainDir, "/reports/", sep = "")
+plotsDir <- paste0(mainDir, "/plots/", sep = "")
+
+
+globalUsage <-import(paste0(dataDir, "globalUsage.csv"))
+googleScholarCitations <-import(paste0(dataDir, "googleScholarCitations.csv"))
+studyMetrics <-import(paste0(dataDir, "studyMetrics.csv"))
+websiteUsage <-import(paste0(dataDir, "websiteUsage.csv"))
+
+
+today <- Sys.Date()
+todayFormated <- format(today, format="%m-%d-%Y")
+```
+
+
+```{r globalUsage}
+#flip data
+
+globalUsageForPlot <- pivot_longer(globalUsage,!Year, names_to = "region", values_to = "count")
+
+
+globalUsagePlot <- ggplot(globalUsageForPlot, aes(x=Year, y=count, fill=region)) +
+geom_bar(stat="identity") +
+    scale_fill_brewer(palette = "Dark2") + 
+    theme_bw() + 
+    theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),    text=element_text(family="sans"), plot.title = element_text(hjust = 0.5, size = 16,face="bold")) + 
+    labs(fill = "Geographic Region") + 
+    ylab("Uses per region")+
+    ggtitle ("ClinEpi Global Usage (Google Analytics)") 
+  
+ggsave(paste0(plotsDir,"globalUsagePlot", todayFormated,".png", sep = ""), plot = globalUsagePlot)
+
+```
+
+
+```{r googleScholarCitations}
+citations <- ggplot(googleScholarCitations, aes(x=year, y=citations)) +
+  geom_area(fill="powderblue", alpha=.4) + 
+  geom_line(color = teal)+
+  theme_bw() +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),    text=element_text(family="sans"), plot.title = element_text(hjust = 0.5, size = 16,face="bold")) + 
+    xlab("Year") +
+    ylab("Citations")+
+    ggtitle ("ClinEpi citations per year")
+
+citations
+
+ggsave(paste0(plotsDir,"citations", todayFormated,".png", sep = ""), plot = citations)
+```
+
+
+```{r googleScholarCitations Cum}
+cumlative <- ggplot(googleScholarCitations, aes(x=year, y=cumulativeCitations)) +
+  geom_area(fill="powderblue", alpha=.4) + 
+  geom_line(color = teal)+
+  theme_bw() +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),    text=element_text(family="sans"), plot.title = element_text(hjust = 0.5, size = 16,face="bold")) + 
+    xlab("Year") +
+    ylab("Cumulative Citations")+
+    ggtitle ("ClinEpi cumulative citations per year")
+
+cumlative
+
+ggsave(paste0(plotsDir,"CumlativeCitations", todayFormated,".png", sep = ""), plot = cumlative)
+```
+
+
+```{r websiteUsagevisitors}
+
+UniqueVisitors <- ggplot(websiteUsage, aes(x=Year, y=UniqueVisitorsPerMonth)) +
+  geom_line(color = teal)+ geom_point() + 
+  scale_x_continuous(breaks = integer_breaks())+
+  theme_bw() +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),    text=element_text(family="sans"), plot.title = element_text(hjust = 0.5, size = 16,face="bold")) + 
+    xlab("Year") +
+    ylab("Unique Visitors Per Month") +
+    ggtitle ("ClinEpi Unique Visitors Per Month (AWS)")
+   
+
+UniqueVisitors
+ggsave(paste0(plotsDir,"UniqueVisitors", todayFormated,".png", sep = ""), plot = UniqueVisitors)
+```
+
+```{r r websiteUsagevisits}
+
+Visitors <- ggplot(websiteUsage, aes(x=Year, y=NumberOfVisitsPerMonth)) +
+  geom_line(color = teal)+ geom_point() + 
+  scale_x_continuous(breaks = integer_breaks())+
+  theme_bw() +
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),    text=element_text(family="sans"), plot.title = element_text(hjust = 0.5, size = 16,face="bold")) + 
+    xlab("Year") +
+    ylab("Number Of Visits Per Month") +
+    ggtitle ("ClinEpi Visitors Per Month (AWS)")
+   
+
+Visitors
+
+ggsave(paste0(plotsDir,"Visitors", todayFormated,".png", sep = ""), plot = Visitors)
+```
+
+
+```{r studyMetricsByProject}
+
+
+studyMetricsReleasedSubset <- subset(studyMetrics, released == "yes")
+
+studyMetricsByProjectSelect <- select(studyMetricsReleasedSubset, c("project", "household","participants","observations", "samples" ))
+
+
+
+studyMetricsByProjectLong <- pivot_longer(studyMetricsByProjectSelect, !project, names_to = "typeOfCount", values_to = "count")
+
+studyMetricsByProject<- studyMetricsByProjectLong  %>% 
+  group_by(project, typeOfCount) %>%                       
+  summarise_at(vars(count),              
+               list(count = sum))
+
+
+
+studyMetricsByProjectPlot <- ggplot(studyMetricsByProject, aes(x=typeOfCount, y=count, fill=project)) +
+            geom_bar(stat="identity")+
+            scale_y_continuous(labels = comma)+
+            scale_fill_brewer(palette = "Set2") + 
+            theme_bw() +
+            theme(panel.border = element_blank(), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(),
+                axis.line = element_line(colour = "black"),    
+                text=element_text(family="sans"),
+                plot.title = element_text(hjust = 0.5, size = 16,face="bold"), 
+                legend.title = element_blank(), 
+                legend.text = element_text(size = 5), 
+                legend.key.size = unit(5, 'mm')) + 
+                xlab("") +
+                ylab("Count")+
+                ggtitle("Record Types by Project")
+  
+
+horizontalMetricsByProject <- studyMetricsByProjectPlot + coord_flip()
+horizontalMetricsByProject
+
+ggsave(paste0(plotsDir,"studyMetricsByProjectPlot", todayFormated,".png", sep = ""), plot = horizontalMetricsByProject)
+
+```
+
+
+```{r studyMetricsByDisease}
+
+studyMetricsByDiseaseSelect <- select(studyMetricsReleasedSubset, c("disease", "household","participants","observations", "samples" ))
+
+
+studyMetricsByDiseaseLong <- pivot_longer(studyMetricsByDiseaseSelect, !disease, names_to = "typeOfCount", values_to = "count")
+
+studyMetricsByDisease<- studyMetricsByDiseaseLong  %>% 
+  group_by(disease, typeOfCount) %>%                       
+  summarise_at(vars(count),              
+               list(count = sum))
+
+
+
+studyMetricsByDiseasePlot <- ggplot(studyMetricsByDisease, aes(x=typeOfCount, y=count, fill=disease)) +
+            geom_bar(stat="identity")+
+            scale_y_continuous(labels = comma)+
+            scale_fill_brewer(palette = "Set2") + 
+            theme_bw() +
+            theme(panel.border = element_blank(), 
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(),
+                axis.line = element_line(colour = "black"),    
+                text=element_text(family="sans"),
+                plot.title = element_text(hjust = 0.5, size = 16,face="bold"), 
+                legend.title = element_blank(), 
+                legend.text = element_text(size = 5), 
+                legend.key.size = unit(5, 'mm')) + 
+                xlab("") +
+                ylab("Count")+
+                ggtitle("Record Types by Disease")
+  
+
+horizontalMetricsByDisease <- studyMetricsByDiseasePlot + coord_flip()
+
+
+horizontalMetricsByDisease
+
+ggsave(paste0(plotsDir,"studyMetricsByDiseasePlot", todayFormated,".png", sep = ""), plot = horizontalMetricsByDisease)
+
+
+```
+
