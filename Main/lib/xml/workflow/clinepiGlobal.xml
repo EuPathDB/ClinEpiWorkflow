@@ -13,6 +13,9 @@
 	stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitUserGroupProject">
     <paramValue name="projectName">$$projectName$$</paramValue>
   </step>
+  <step name="initDIYUserGroupProject" 
+	stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitDIYUserGroupProject">
+  </step>
 
  <subgraph name="Ontology_Relationship_Types_RSRC" xmlFile="loadDataset.xml">
     <paramValue name="datasetName">Ontology_Relationship_Types_RSRC</paramValue>
