@@ -1,9 +1,0 @@
-#44555 - Move creation of metric and status plots into R markdown
-
-Currently, we make a series of graphs in 2 excel files for things like the number of ClinEpiDB citations per year, the number of unique visitors per month, the geographic distribution of our users each year, and total numbers of Participants, Observations etc. for all studies (grouped by individual study, larger projects, or disease areas).
-
-We want to move creation of these plots from excel files into R markdown files where the plots are generated with ggplot using defined colors that match our website color scheme.
-
-The current excel files are in gdrive under the folder ClinEpiDB Status. The files are ClinEpiDB metrics (https://docs.google.com/spreadsheets/d/1sybToW_mDgJ9k51oP75CYYtu3I8aP_VK/edit#gid=1241189237) and Participants_observations_households_counts (https://docs.google.com/spreadsheets/d/1bfcocvl90-lYud6jz4V3d9RvpNH_q_NH/edit#gid=1949106836).
-
-We should create a directory in Git that includes separate data files for each set of plots where we can update the data on a regular basis along with an R markdown file that contains the code to generate plots.
