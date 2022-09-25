@@ -33,6 +33,7 @@ Google Analytics Website Usage (websiteUsage_googleAnalytics.csv)
 2. On the left hand side, click "Audience", then "Overview". In the upper right hand corner, set the date range of interest
 3. Scroll down to the Users and Sessions numbers and copy/paste the totals into columns B-C
 4. In column D, set the number of months that have data for that year
+Note: We have an extremely high number of hits from Indonesia with >98% bounce rate. These are fake and I removed those counts for 2021 and 2022
 
 
 Global Usage (globalUsage.csv)
@@ -42,3 +43,4 @@ Global Usage (globalUsage.csv)
 3. Change the primary dimension from Country to Continent
 4. Copy over the data in the first column, "Users". Note the order of rows changes based on the number of users from each region
 5. Update the graph to include data from the newest row
+Note: We have an extremely high number of hits from Indonesia with >98% bounce rate. These are fake and I removed those counts for 2021 and 2022

@@ -25,13 +25,12 @@ integer_breaks <- function(n = 5, ...) {
 
 globalUsage <-import("data/globalUsage.csv")
 googleScholarCitations <-import("data/googleScholarCitations.csv")
-studyMetrics <-import("data/studyMetrics.csv")
 websiteUsage <-import("data/websiteUsage_awstats.csv")
 websiteStatsGoogle <- import('data/websiteUsage_googleAnalytics.csv')
 studySummary <- import("data/Studies_Summary.csv")
 
 today <- Sys.Date()
-todayFormated <- format(today, format="%Y-%m-%d")
+todayFormated <- format(today, format="%Y%m%d")
 ```
 
 ##ClinEpiPallet Colors
@@ -130,7 +129,7 @@ globalUsagePlot <- ggplot(globalUsageForPlot, aes(x=Year, y=n, fill=region)) +
 
 globalUsagePlot  
 
-ggsave(paste0("plots/globalUsagePlot","_", todayFormated,".png", sep = ""), plot = globalUsagePlot)
+ggsave(paste0("plots/", todayFormated, "_globalUsagePlot" ,".png", sep = ""), plot = globalUsagePlot)
 
 ```
 
@@ -157,7 +156,7 @@ citations <- ggplot(googleScholarCitations, aes(x=year, y=citations))+
 
 citations
 
-ggsave(paste0("plots/citations", "_", todayFormated,".png", sep = ""), plot = citations)
+ggsave(paste0("plots/",todayFormated,"_citations",".png", sep = ""), plot = citations)
 ```
 
 ##Plot the cumulative number of citiations of ClinEpiDB
@@ -199,7 +198,7 @@ cumlative <- ggplot(googleScholarCitationsForPlot, aes(x=year, y=n, color = type
 
 cumlative
 
-ggsave(paste0("plots/cumlativeCitations", "_", todayFormated,".png", sep = ""), plot = cumlative)
+ggsave(paste0("plots/",todayFormated,"_cumlativeCitations",".png", sep = ""), plot = cumlative)
 ```
 
 ##Plot the number of unique visitors ClinEpiDB received on average per month each year. Data from AW stats
@@ -245,7 +244,7 @@ uniqueVisitors <- ggplot(websiteUsage, aes(x=Year, y=UniqueVisitorsPerMonth)) +
 
 uniqueVisitors
 
-ggsave(paste0("plots/uniqueVisitorsAWS", "_", todayFormated,".png", sep = ""), plot = uniqueVisitors)
+ggsave(paste0("plots/",todayFormated,"_uniqueVisitorsAWS",".png", sep = ""), plot = uniqueVisitors)
 ```
 
 ##Plot the number of visits ClinEpiDB received on average per month each year. Data from AW stats
@@ -273,7 +272,7 @@ visits <- ggplot(websiteUsage, aes(x=Year, y=NumberOfVisitsPerMonth)) +
 
 visits
 
-ggsave(paste0("plots/visitsAWS", "_", todayFormated,".png", sep = ""), plot = visits)
+ggsave(paste0("plots/",todayFormated,"_visitsAWS",".png", sep = ""), plot = visits)
 ```
 
 ##Google Stats - Calculate values
@@ -309,7 +308,7 @@ usersGoogle <- ggplot(websiteStatsGoogle, aes(x=year, y=usersMonth)) +
 
 usersGoogle
 
-ggsave(paste0("plots/usersGoogle", "_", todayFormated,".png", sep = ""), plot = usersGoogle)
+ggsave(paste0("plots/", todayFormated,"_usersGoogle", ".png", sep = ""), plot = usersGoogle)
 ```
 
 ##Google Stats - sessions/month
@@ -337,7 +336,7 @@ sessionsGoogle <- ggplot(websiteStatsGoogle, aes(x=year, y=sessionsMonth)) +
 
 sessionsGoogle
 
-ggsave(paste0("plots/sessionsGoogle", "_", todayFormated,".png", sep = ""), plot = sessionsGoogle)
+ggsave(paste0("plots/",todayFormated,"_sessionsGoogle",".png", sep = ""), plot = sessionsGoogle)
 ```
 
 ##Plot the number of records by disease 
@@ -360,10 +359,15 @@ studySummary_byDiseaseLong <- pivot_longer(studySummary_byDisease, !Disease, nam
 
 studySummary_byDiseaseLong$typeOfCount <- factor(studySummary_byDiseaseLong$typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))
 
+str_wrap_factor <- function(x) {
+  levels(x) <- str_wrap(levels(x),15)
+  x
+}
+
 ```
 
 ```{r}
-studyMetricsByDiseasePlot <- ggplot(studySummary_byDiseaseLong, aes(x=(str_wrap(typeOfCount,15)), y=count, fill= Disease)) +
+studyMetricsByDiseasePlot <- ggplot(studySummary_byDiseaseLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill= Disease)) +
     geom_bar(stat = "identity", position = position_stack(reverse = T)) +
     scale_fill_clinEpi_d("clinEpiDefault") +
     scale_x_discrete(limits=rev)+
@@ -389,7 +393,7 @@ studyMetricsByDiseasePlot <- ggplot(studySummary_byDiseaseLong, aes(x=(str_wrap(
 studyMetricsByDiseasePlot <- studyMetricsByDiseasePlot + coord_flip()
 studyMetricsByDiseasePlot
 
-ggsave(paste0("plots/studyMetricsByDisease", "_", todayFormated,".png", sep = ""), plot = studyMetricsByDiseasePlot)
+ggsave(paste0("plots/",todayFormated,"_studyMetricsByDisease",".png", sep = ""), plot = studyMetricsByDiseasePlot)
 
 ```
 
@@ -407,7 +411,7 @@ studySummary_byProjectLong$typeOfCount <- factor(studySummary_byProjectLong$type
 ```
 
 ``` {r}
-studyMetricsByProjectPlot <- ggplot(studySummary_byProjectLong, aes(x=typeOfCount, y=count, fill=`Project name`)) +
+studyMetricsByProjectPlot <- ggplot(studySummary_byProjectLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Project name`)) +
            geom_bar(stat = "identity", position = position_stack(reverse = T)) +
             scale_fill_clinEpi_d("clinEpiDefault") +
             scale_x_discrete(limits=rev)+
@@ -433,25 +437,26 @@ studyMetricsByProjectPlot <- ggplot(studySummary_byProjectLong, aes(x=typeOfCoun
 studyMetricsByProjectPlot <- studyMetricsByProjectPlot + coord_flip()
 studyMetricsByProjectPlot
 
-ggsave(paste0("plots/studyMetricsByProject", "_", todayFormated,".png", sep = ""), plot = studyMetricsByProjectPlot)
+ggsave(paste0("plots/",todayFormated,"_studyMetricsByProject",".png", sep = ""), plot = studyMetricsByProjectPlot)
 
 ```
 
 ##Plot the number of records by study design
 ```{r studyMetricsByStudyDesign}
-studySummary_byStudyDesign <- select(studySummary, c("Study design", 'Households', 'Participants', "Participant repeated measures", "Samples"))
-  
-studySummary_byStudyDesign$`Study design` <- if_else(studySummary_byStudyDesign$`Study design` == "", "Other",studySummary_byStudyDesign$`Study design`)
+studySummary_byStudyDesign <- select(studySummary, c("Study design", 'Households', 'Participants', "Participant repeated measures", "Samples")) %>% 
+    mutate(`Study design` = case_when(`Study design` == "" ~ "Other", 
+                                      `Study design` == "Prospective cohort" ~ "Cohort", 
+                                      `Study design` == "Non-randomized" ~ "Other", 
+                                      T ~ `Study design`))
   
 studySummary_byStudyDesignLong <- pivot_longer(studySummary_byStudyDesign, !`Study design`, names_to = "typeOfCount", values_to = "count")
 studySummary_byStudyDesignLong$typeOfCount <- factor(studySummary_byStudyDesignLong$typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))
-
 
 ```
 
 
 ```{r}
-studySummary_byStudyDesignPlot <- ggplot(studySummary_byStudyDesignLong, aes(x=typeOfCount, y=count, fill=`Study design`)) +
+studySummary_byStudyDesignPlot <- ggplot(studySummary_byStudyDesignLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Study design`)) +
            geom_bar(stat = "identity", position = position_stack(reverse = T)) +
             scale_fill_clinEpi_d("clinEpiDefault") +
             scale_x_discrete(limits=rev)+
@@ -477,7 +482,7 @@ studySummary_byStudyDesignPlot <- ggplot(studySummary_byStudyDesignLong, aes(x=t
 studySummary_byStudyDesignPlot <- studySummary_byStudyDesignPlot + coord_flip()
 studySummary_byStudyDesignPlot
 
-ggsave(paste0("plots/studyMetricsByStudyDesign", "_", todayFormated,".png", sep = ""), plot = studySummary_byStudyDesignPlot)
+ggsave(paste0("plots/",todayFormated,"_studyMetricsByStudyDesign",".png", sep = ""), plot = studySummary_byStudyDesignPlot)
 
 ```
 
