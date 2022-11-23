@@ -12,8 +12,10 @@ updateVariableMap <- function(VARMAP) {
     library(tidyverse)
     
     varMap <- VARMAP %>% 
-        mutate(label = str_replace(label,"'$", "")) %>%  #remove ' at end of labels
-        mutate(parentLabel = str_replace(parentLabel,"'$", "")) %>%  #remove ' at end of parentLabels
+        mutate(label = str_remove(label,"'$")) %>%  #remove ' at end of labels
+        mutate(label = str_remove(label,"^'")) %>%  #remove ' at start of labels
+        mutate(parentLabel = str_remove(parentLabel,"'$")) %>%  #remove ' at end of parentLabels
+        mutate(parentLabel = str_remove(parentLabel,"^'")) %>%  #remove ' at start of parentLabels
         mutate(colOrder = as.character(colOrder)) %>% #change colOrder to character
         select(-c(notesForProvider, notesForDL, type:variable_dataFile)) %>% #remove cols the ontology team doesn't need
         relocate(uniqueVar, .before = dataFile) %>% 
