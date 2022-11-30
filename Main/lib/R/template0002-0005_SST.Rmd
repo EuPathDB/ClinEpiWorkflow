@@ -80,9 +80,10 @@ for termType: multifilter = multifilter category, value = multifilter value, var
 
 ```{r 0003 make variableMap}
 source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0003_SST_makeVariableMap.R") #load the function
-ALLVARS <- read.csv("./R_output/provide_allVariables_v1.csv", as.is = T) #load the allVariables file where you've marked variables to keep/discard
 OUTPUT <- "./R_output/provide_variableMap_v1.csv" #where to save the new variableMap file
-makeVariableMap(ALLVARS, OUTPUT) #run the function, which writes a csv file for you
+
+ALLVARS <- read.csv("./R_output/provide_allVariables_v1.csv", as.is = T) %>% #load the allVariables file where you've marked variables to keep/discard
+    makeVariableMap(OUTPUT) #run the function, which writes a csv file for you
 ```
 
 ## Template 0004_SST_update_variableMap
@@ -100,19 +101,14 @@ After running the function:
 
 ```{r 0004 update variableMap}
 source("/Users/sshahsimpson/Documents/Git/ClinEpiWorkflow/Main/lib/R/0004_SST_update_variableMap.R") #load the function
-VARMAP <- read.csv("./R_output/provide_variableMap_v2.csv", as.is = T) #load the variableMap file that you've been editing
 OUTPUT <- "./R_output/provide_variableMap.csv" #where to save the updated file
-varMap <- updateVariableMap(VARMAP) #run the function
 
-#if removing uniqueVar, use this code
-varMap <- varMap %>% 
-    select(-uniqueVar)
+VARMAP <- read.csv("./R_output/provide_variableMap_v2.csv", as.is = T) %>% #load the variableMap file that you've been editing
+    updateVariableMap(VARMAP) %>%  #run the function
+    select(-uniquevar) %>% #if removing uniqueVar, use this code
+    select(-variable, variable = uniqueVar) #if using uniqueVar and removing variable, use this code
 
-#if using uniqueVar and removing variable, use this code
-varMap <- varMap %>% 
-    select(-variable, variable = uniqueVar)
-
-write.csv(varMap, OUTPUT, row.names = F)
+write.csv(VARMAP, OUTPUT, row.names = F)
 ```
 
 ## Template 0005_SST_update_valueMap
@@ -135,18 +131,14 @@ ALLVARS <- read.csv("./R_output/provide_allVariables_v2.csv", as.is = T) #load t
 OUTPUT <- "./R_output/provide_valueMap_v1.txt" #indicate where to save the valueMap file
 valueMap2 <- updateValueMap(valueMap, ALLVARS) #run function
 
-#if using variable, use this code
-valueMap2 <- valueMap2 %>% 
-    mutate(variable2 = variable) %>% #create variable2 column
-    relocate(variable2, .before = values) %>% #move variable2
-    select(-uniqueVar) %>% #remove uniqueVar
-    distinct(variable, values, .keep_all = T) #remove duplicate rows if not using uniqueVar
+    #mutate(variable2 = variable) %>% #if using variable, create variable2 column with this code
+    #relocate(variable2, .before = values) %>% #move variable2
+    #select(-uniqueVar) %>% #remove uniqueVar
+    #distinct(variable, values, .keep_all = T) #remove duplicate rows if not using uniqueVar
 
-#if using uniqueVar, use this code
-valueMap2 <- valueMap2 %>% 
-    mutate(variable2 = uniqueVar) %>% #create variable2 column
-    relocate(variable2, .before = values) %>% #move variable2
-    select(-variable, variable = uniqueVar) #replace variable with uniqueVar
+    #mutate(variable2 = uniqueVar) %>% #if using uniqueVar, create variable2 column with this code
+    #relocate(variable2, .before = values) %>% #move variable2
+    #select(-variable, variable = uniqueVar) #replace variable with uniqueVar
 
 write.table(valueMap2, OUTPUT, sep = "\t", quote = F, row.names = F)
 ```

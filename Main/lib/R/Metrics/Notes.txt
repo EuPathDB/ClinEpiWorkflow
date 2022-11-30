@@ -11,27 +11,36 @@ Logos
 https://drive.google.com/drive/folders/1WGThB9HDdkdCmJ6zSWCTKIm9WaKOK8sa
 
 
-Google Scholar Citations
-------------------------
+Google Scholar Citations (googleScholarCitations.csv)
+-----------------------------------------------------
 1. Go to https://scholar.google.com/
 2. Search for ClinEpiDB
 3. Set a "Custom range" of that year only (i.e. 2021-2021) to capture citations from one year at a time
 4. Manually review and remove counts for duplicate results, our own study pages, etc.
 
-webSiteUsage
-------------
+
+AW Stats Website Usage (websiteUsage_awstats.csv)
+----------------------------------------
 1. Go to https://clinepidb.org/awstats/awstats.pl
 2. At the top of the page in the "Reported period" set the month to " - Year - " and then change the year to the year of interest
 3. Scroll down to the monthly history and copy/paste the totals into columns B-G
 4. In column H, set the number of months that have data for that year
-5. In column I-M, copy the formulas into the newest row
-6. Update the graphs to include data from the newest row
 
 
-globalUsage
------------
+Google Analytics Website Usage (websiteUsage_googleAnalytics.csv)
+-----------------------------------------------------------------
+1. Go to https://analytics.google.com/analytics
+2. On the left hand side, click "Audience", then "Overview". In the upper right hand corner, set the date range of interest
+3. Scroll down to the Users and Sessions numbers and copy/paste the totals into columns B-C
+4. In column D, set the number of months that have data for that year
+Note: We have an extremely high number of hits from Indonesia with >98% bounce rate. These are fake and I removed those counts for 2021 and 2022
+
+
+Global Usage (globalUsage.csv)
+------------------------------
 1. Go to https://analytics.google.com/analytics
 2. On the left hand side, click "Audience", then "Geo", then "Location"
 3. Change the primary dimension from Country to Continent
 4. Copy over the data in the first column, "Users". Note the order of rows changes based on the number of users from each region
 5. Update the graph to include data from the newest row
+Note: We have an extremely high number of hits from Indonesia with >98% bounce rate. These are fake and I removed those counts for 2021 and 2022
