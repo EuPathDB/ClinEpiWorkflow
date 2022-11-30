@@ -117,6 +117,7 @@
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
       <paramValue name="attributesFile">entities.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <paramValue name="enableUndo">0</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
@@ -125,6 +126,7 @@
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
       <paramValue name="attributesFile">ordinals.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <paramValue name="enableUndo">0</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
@@ -133,6 +135,7 @@
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
       <paramValue name="attributesFile">owlAttributes.txt</paramValue>
       <paramValue name="dataDir">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/final</paramValue>
+      <paramValue name="enableUndo">0</paramValue>
       <depends name="OntologyTerm_${webDisplayOntologyName}_RSRC"/>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
@@ -153,7 +156,7 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_updateOntologySynonym_entities"/>
     </step>
 
-    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadAttributesFromEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin">
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadAttributesFromEntityGraph" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertEDA" stepLoadTypes="plugin:loadAttributesFromEntityGraph">
     	<paramValue name="plugin">ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph</paramValue>
       <paramValue name="extDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
       <paramValue name="webDisplayOntologyName">${webDisplayOntologyName}</paramValue>
