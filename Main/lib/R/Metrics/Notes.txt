@@ -44,3 +44,17 @@ Global Usage (globalUsage.csv)
 4. Copy over the data in the first column, "Users". Note the order of rows changes based on the number of users from each region
 5. Update the graph to include data from the newest row
 Note: We have an extremely high number of hits from Indonesia with >98% bounce rate. These are fake and I removed those counts for 2021 and 2022
+
+
+Data Access Requests (dataAccess.csv)
+------------------------------
+1. Using DBeaver Database Manager connect to acctDb
+2. Open ClinEpiWorkflow/Main/lib/R/Metrics/dataAccessRequests.sql
+3. Confirm you have an active session with acctDb before running the sql script
+4. To export the data - export button below results pane
+    a. Export target = "Export to CSV"
+    b. Extraction settings = default
+    c. Format settings = default
+    d. Output - set directory to 'ClinEpiWorkflow/Main/lib/R/Metrics/data/', set filename pattern to 'dataAccess'
+    e. Click 'Proceed'
+
