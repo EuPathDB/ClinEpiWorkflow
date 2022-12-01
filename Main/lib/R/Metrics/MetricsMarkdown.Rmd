@@ -28,6 +28,7 @@ googleScholarCitations <-import("data/googleScholarCitations.csv")
 websiteUsage <-import("data/websiteUsage_awstats.csv")
 websiteStatsGoogle <- import('data/websiteUsage_googleAnalytics.csv')
 studySummary <- import("data/Studies_Summary.csv")
+dataAccess <- import("data/dataAccess.csv")
 
 today <- Sys.Date()
 todayFormated <- format(today, format="%Y%m%d")
@@ -168,7 +169,7 @@ googleScholarCitations$`Non-study team`  <-cumsum(googleScholarCitations[,'nonSt
 
 googleScholarCumulativeForPlot <- select(googleScholarCitations, c(year, `Total`, `Non-study team`))
 
-googleScholarCitationsForPlot <- pivot_longer(googleScholarCumulativeForPlot,!year, names_to = "type", values_to = "n")
+googleScholarCitationsForPlot <- tidyr::pivot_longer(googleScholarCumulativeForPlot,!year, names_to = "type", values_to = "n")
 
 
 ```
@@ -484,5 +485,79 @@ studySummary_byStudyDesignPlot
 
 ggsave(paste0("plots/",todayFormated,"_studyMetricsByStudyDesign",".png", sep = ""), plot = studySummary_byStudyDesignPlot)
 
+```
+
+
+
+
+##Data Access
+#### calculate values and transform
+```{r dataAccessCumulative}
+
+colnames(dataAccess) <- c("Year", 'Total requests', 'Approved requests', 'Denied requests')
+
+#calculate cumulative sum
+dataAccess$`Total cumulative requests` <-cumsum(dataAccess[, 'Total requests'])
+dataAccess$`Approved cumulative requests` <-cumsum(dataAccess[, 'Approved requests'])
+
+
+dataAccessForPlot <- select(dataAccess, c(Year, `Total cumulative requests`, `Approved cumulative requests`))
+
+dataAccessForPlot <- tidyr::pivot_longer(dataAccessForPlot,!Year, names_to = "type", values_to = "n")
+
+```
+
+##Plot data access requests per year
+```{r dataAccessPerYear}
+dataAccessRequests <- ggplot(dataAccess, aes(x=Year, y=`Total requests`))+
+  geom_point(color = ClinEpiColor1st)+
+  geom_line(color = ClinEpiColor1st)+
+  theme_bw() +
+  theme(panel.border = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(), 
+          axis.line = element_line(colour = "black"), 
+          text=element_text(color = "black"), 
+          plot.title = element_text(hjust = 0.5, size = 16,face="bold"),
+          axis.title.x = element_text(size=14),
+          axis.text.x = element_text(size=14, face = 'bold'),
+          axis.title.y = element_text(size=14),
+          axis.text.y = element_text(size=14, face = 'bold'))+ 
+    xlab("Year") +
+    ylab("Data Requests")+
+    ggtitle ("Study data requests per year")
+
+dataAccessRequests
+
+ggsave(paste0("plots/",todayFormated,"_dataAccessRequests",".png", sep = ""), plot = dataAccessRequests)
+```
+
+##Plot cumlative requests per year
+```{r dataCumAccessPerYear}
+
+cumlativeRequests <- ggplot(dataAccessForPlot, aes(x=Year, y=n, color = type)) +
+  geom_point(position = position_stack(reverse = TRUE))+
+  geom_line(position = position_stack(reverse = TRUE))+
+  scale_colour_clinEpi_d("clinEpiDefault") +
+  theme_bw() +
+  theme(panel.border = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(), 
+          legend.title=element_blank(),
+          axis.line = element_line(colour = "black"), 
+          text=element_text(color = "black"), 
+          plot.title = element_text(hjust = 0.5, size = 16,face="bold"),
+          axis.title.x = element_text(size=14),
+          axis.text.x = element_text(size=14, face = 'bold'),
+          axis.title.y = element_text(size=14),
+          axis.text.y = element_text(size=14, face = 'bold')) + 
+    guides(fill = guide_legend(byrow = TRUE), color = guide_legend(reverse=TRUE))+
+    xlab("Year") +
+    ylab("Requests")+
+    ggtitle ("Cumulative study requests per year")
+
+cumlativeRequests
+
+#ggsave(paste0("plots/",todayFormated,"_cumlativeDataAccessRequests",".png", sep = ""), plot = cumlativeRequests)
 ```
 
