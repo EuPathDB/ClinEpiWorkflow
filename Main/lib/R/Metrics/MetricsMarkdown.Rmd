@@ -177,8 +177,8 @@ googleScholarCitationsForPlot <- tidyr::pivot_longer(googleScholarCumulativeForP
 #### plot 
 ```{r googleScholarCumulativePlot}
 cumlative <- ggplot(googleScholarCitationsForPlot, aes(x=year, y=n, color = type)) +
-  geom_point(position = position_stack(reverse = TRUE))+
-  geom_line(position = position_stack(reverse = TRUE))+
+  geom_point()+
+  geom_line()+
   scale_colour_clinEpi_d("clinEpiDefault") +
   theme_bw() +
   theme(panel.border = element_blank(), 
@@ -343,22 +343,19 @@ ggsave(paste0("plots/",todayFormated,"_sessionsGoogle",".png", sep = ""), plot =
 ##Plot the number of records by disease 
 ```{r studyMetricsByDisease}
 
-studySummary_byDisease <- select(studySummary, c('Disease', 'Households', 'Participants', "Participant repeated measures", "Samples"))
-
-
-#recode disease
-# NA or multiple disease == other
-studySummary_byDisease$Disease <- recode(studySummary_byDisease$Disease, 
+studySummary_byDisease <- select(studySummary, c('Disease', 'Households', 'Participants', "Participant repeated measures", "Samples")) %>% 
+    mutate(Disease = recode(Disease, 
                             'Diarrheal disease, Malaria, Respiratory condition' = "Other",
-                            'Diarrheal disease, Respiratory condition' = "Other")
-
-
-studySummary_byDisease$Disease <- if_else(studySummary_byDisease$Disease == "", "Other",studySummary_byDisease$Disease)
-
-studySummary_byDiseaseLong <- pivot_longer(studySummary_byDisease, !Disease, names_to = "typeOfCount", values_to = "count")
-
-
-studySummary_byDiseaseLong$typeOfCount <- factor(studySummary_byDiseaseLong$typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))
+                            'Diarrheal disease, Respiratory condition' = "Other",
+                            "N/A" = "Other")) %>%  #recode disease so N/A or multiple disease == other
+    pivot_longer(!Disease, 
+                 names_to = "typeOfCount", 
+                 values_to = "count") %>% 
+    mutate(count = recode(count, "N/A" = "")) %>% 
+    mutate(count = str_remove_all(count, ",")) %>% 
+    mutate(count = as.numeric(count)) %>% #convert count to numeric
+    mutate(typeOfCount = factor(typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))) %>% 
+    mutate(Disease = factor(Disease, levels = c("Diarrheal disease", "Malaria", "Schistosomiasis", "Other","Respiratory condition", "HIV")))
 
 str_wrap_factor <- function(x) {
   levels(x) <- str_wrap(levels(x),15)
@@ -368,7 +365,7 @@ str_wrap_factor <- function(x) {
 ```
 
 ```{r}
-studyMetricsByDiseasePlot <- ggplot(studySummary_byDiseaseLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill= Disease)) +
+studyMetricsByDiseasePlot <- ggplot(studySummary_byDisease, aes(x=str_wrap_factor(typeOfCount), y=count, fill= Disease)) +
     geom_bar(stat = "identity", position = position_stack(reverse = T)) +
     scale_fill_clinEpi_d("clinEpiDefault") +
     scale_x_discrete(limits=rev)+
@@ -401,18 +398,20 @@ ggsave(paste0("plots/",todayFormated,"_studyMetricsByDisease",".png", sep = ""),
 ##Plot the number of records by project
 ```{r studyMetricsByProject}
 
-studySummary_byProject <-select(studySummary, c('Project name', 'Households', 'Participants', "Participant repeated measures", "Samples"))
-
-studySummary_byProject$`Project name` <- if_else(studySummary_byProject$`Project name` == "", "Other",studySummary_byProject$`Project name`)
-
-studySummary_byProjectLong <- pivot_longer(studySummary_byProject, !`Project name`, names_to = "typeOfCount", values_to = "count")
-
-studySummary_byProjectLong$typeOfCount <- factor(studySummary_byProjectLong$typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))
+studySummary_byProject <-select(studySummary, c('Project name', 'Households', 'Participants', "Participant repeated measures", "Samples")) %>% 
+    mutate(`Project name` = recode(`Project name`,"N/A" = "Other")) %>% 
+    pivot_longer(!`Project name`, 
+                 names_to = "typeOfCount", 
+                 values_to = "count") %>% 
+    mutate(count = recode(count, "N/A" = "")) %>% 
+    mutate(count = str_remove_all(count, ",")) %>% 
+    mutate(count = as.numeric(count)) %>%  #convert count to numeric
+    mutate(typeOfCount = factor(typeOfCount, levels = c("Households", "Participants", "Participant repeated measures", "Samples")))
 
 ```
 
 ``` {r}
-studyMetricsByProjectPlot <- ggplot(studySummary_byProjectLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Project name`)) +
+studyMetricsByProjectPlot <- ggplot(studySummary_byProject, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Project name`)) +
            geom_bar(stat = "identity", position = position_stack(reverse = T)) +
             scale_fill_clinEpi_d("clinEpiDefault") +
             scale_x_discrete(limits=rev)+
@@ -445,19 +444,23 @@ ggsave(paste0("plots/",todayFormated,"_studyMetricsByProject",".png", sep = ""),
 ##Plot the number of records by study design
 ```{r studyMetricsByStudyDesign}
 studySummary_byStudyDesign <- select(studySummary, c("Study design", 'Households', 'Participants', "Participant repeated measures", "Samples")) %>% 
-    mutate(`Study design` = case_when(`Study design` == "" ~ "Other", 
-                                      `Study design` == "Prospective cohort" ~ "Cohort", 
-                                      `Study design` == "Non-randomized" ~ "Other", 
-                                      T ~ `Study design`))
-  
-studySummary_byStudyDesignLong <- pivot_longer(studySummary_byStudyDesign, !`Study design`, names_to = "typeOfCount", values_to = "count")
-studySummary_byStudyDesignLong$typeOfCount <- factor(studySummary_byStudyDesignLong$typeOfCount , levels = c("Households", "Participants", "Participant repeated measures", "Samples"))
+    mutate(`Study design` = recode(`Study design`, "N/A" = "Other", 
+                                    "Non-randomized" = "Other",
+                                   "Randomized controlled/clinical trial" = "Randomized controlled trial")) %>% 
+    pivot_longer(!`Study design`, 
+                 names_to = "typeOfCount", 
+                 values_to = "count") %>% 
+    mutate(count = recode(count, "N/A" = "")) %>% 
+    mutate(count = str_remove_all(count, ",")) %>% 
+    mutate(count = as.numeric(count)) %>%  #convert count to numeric
+    mutate(typeOfCount = factor(typeOfCount, levels = c("Households", "Participants", "Participant repeated measures", "Samples"))) %>% 
+    mutate(`Study design` = factor(`Study design`, levels = c("Cross-sectional", "Cohort", "Case-control", "Randomized controlled trial", "Other")))
 
 ```
 
 
 ```{r}
-studySummary_byStudyDesignPlot <- ggplot(studySummary_byStudyDesignLong, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Study design`)) +
+studySummary_byStudyDesignPlot <- ggplot(studySummary_byStudyDesign, aes(x=str_wrap_factor(typeOfCount), y=count, fill=`Study design`)) +
            geom_bar(stat = "identity", position = position_stack(reverse = T)) +
             scale_fill_clinEpi_d("clinEpiDefault") +
             scale_x_discrete(limits=rev)+
@@ -501,7 +504,8 @@ dataAccess$`Total cumulative requests` <-cumsum(dataAccess[, 'Total requests'])
 dataAccess$`Approved cumulative requests` <-cumsum(dataAccess[, 'Approved requests'])
 
 
-dataAccessForPlot <- select(dataAccess, c(Year, `Total cumulative requests`, `Approved cumulative requests`))
+dataAccessForPlot <- select(dataAccess, c(Year, `Total cumulative requests`, `Approved cumulative requests`)) %>% 
+    rename(`Total requests` = `Total cumulative requests`, `Approved requests` = `Approved cumulative requests`)
 
 dataAccessForPlot <- tidyr::pivot_longer(dataAccessForPlot,!Year, names_to = "type", values_to = "n")
 
@@ -525,7 +529,7 @@ dataAccessRequests <- ggplot(dataAccess, aes(x=Year, y=`Total requests`))+
           axis.text.y = element_text(size=14, face = 'bold'))+ 
     xlab("Year") +
     ylab("Data Requests")+
-    ggtitle ("Study data requests per year")
+    ggtitle ("Data access requests per year")
 
 dataAccessRequests
 
@@ -536,8 +540,8 @@ ggsave(paste0("plots/",todayFormated,"_dataAccessRequests",".png", sep = ""), pl
 ```{r dataCumAccessPerYear}
 
 cumlativeRequests <- ggplot(dataAccessForPlot, aes(x=Year, y=n, color = type)) +
-  geom_point(position = position_stack(reverse = TRUE))+
-  geom_line(position = position_stack(reverse = TRUE))+
+  geom_point()+
+  geom_line()+
   scale_colour_clinEpi_d("clinEpiDefault") +
   theme_bw() +
   theme(panel.border = element_blank(), 
@@ -554,10 +558,10 @@ cumlativeRequests <- ggplot(dataAccessForPlot, aes(x=Year, y=n, color = type)) +
     guides(fill = guide_legend(byrow = TRUE), color = guide_legend(reverse=TRUE))+
     xlab("Year") +
     ylab("Requests")+
-    ggtitle ("Cumulative study requests per year")
+    ggtitle ("Cumulative data access requests")
 
 cumlativeRequests
 
-#ggsave(paste0("plots/",todayFormated,"_cumlativeDataAccessRequests",".png", sep = ""), plot = cumlativeRequests)
+ggsave(paste0("plots/",todayFormated,"_cumlativeDataAccessRequests",".png", sep = ""), plot = cumlativeRequests)
 ```
 

@@ -23,8 +23,9 @@ AW Stats Website Usage (websiteUsage_awstats.csv)
 ----------------------------------------
 1. Go to https://clinepidb.org/awstats/awstats.pl
 2. At the top of the page in the "Reported period" set the month to " - Year - " and then change the year to the year of interest
-3. Scroll down to the monthly history and copy/paste the totals into columns B-G
-4. In column H, set the number of months that have data for that year
+3. Scroll down to the monthly history and copy/paste the totals into columns B-F
+4. In column G, divide NumberVisits by UniqueVisitors
+5. In column H, set the number of months that have data for that year
 
 
 Google Analytics Website Usage (websiteUsage_googleAnalytics.csv)
@@ -58,5 +59,4 @@ Data Access Requests (dataAccess.csv)
     d. Output - set directory to 'ClinEpiWorkflow/Main/lib/R/Metrics/data/', set filename pattern to 'dataAccess'
     e. Click 'Proceed'
 
-a
 
