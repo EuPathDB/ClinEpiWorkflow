@@ -26,7 +26,7 @@ allvars2 <- dataDictionary %>%
     select(variable = VARIABLE, 
         codebookDescription = CODEBOOKDESCRIPTION,
         codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL) %>% #select and rename the columns
-    mutate_all(as.character) %>%                #convert all columns to character 
+    mutate(across(everything()),as.character) %>%                #convert all columns to character 
     mutate(variable = tolower(variable)) %>%    #make variable all lower case 
     full_join(ALLVARS, by = "variable") %>%     #merge dataDictionary with allVars
     mutate(keepDiscard = "",
