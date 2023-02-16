@@ -7,7 +7,6 @@ addDD <- function(ALLVARS, FOLDER, TYPE, VARIABLE, CODEBOOKDESCRIPTION, CODEBOOK
     
 #load libraries
 library(tidyverse)
-library(plyr)
 library(readxl)
 
 #read in and create single data dictionary file from multiple files
@@ -22,11 +21,12 @@ if(TYPE==".xls"){
         map_dfr(read_xls)}
 
 #rename key variables in dataDictionary, join with allVars file, and reorder
+label_updates <- c(variable = VARIABLE, 
+                   codebookDescription = CODEBOOKDESCRIPTION,
+                   codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL)
 allvars2 <- dataDictionary %>% 
-    select(variable = VARIABLE, 
-        codebookDescription = CODEBOOKDESCRIPTION,
-        codebookValues = CODEBOOKVALUES, notesForDL = NOTESFORDL) %>% #select and rename the columns
-    mutate(across(everything()),as.character) %>%                #convert all columns to character 
+    select(all_of(label_updates)) %>% #select and rename the columns
+    mutate(across(everything(), as.character)) %>%                #convert all columns to character 
     mutate(variable = tolower(variable)) %>%    #make variable all lower case 
     full_join(ALLVARS, by = "variable") %>%     #merge dataDictionary with allVars
     mutate(keepDiscard = "",
