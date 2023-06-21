@@ -42,7 +42,7 @@
       <paramValue name="speciesReconciliationFallbackSpecies"></paramValue>
       <paramValue name="loadStudyCharacteristics">true</paramValue>
       <paramValue name="context">clinepi</paramValue>
-      <paramValue name="optionalMegaStudyStableId"></paramValue>
+      <paramValue name="optionalStudyStableId"></paramValue>
       <paramValue name="studyClassificationsYaml">lib/yaml/ClinEpiDB.yaml</paramValue>
       <paramValue name="studyClassificationsOwl">ontology/release/production/classifications.owl</paramValue>
       <depends name="makeDataDir"/>
