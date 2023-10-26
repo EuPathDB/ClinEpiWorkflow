@@ -10,7 +10,7 @@
 ######## (A) import the variable map file with labels & IRIs (and parent lables & IRIs) filled out
 ######## ######### NOTE: EVERY ROW IN THE VARIABLE MAP FILE MUST HAVE A LABEL
 ######## ######### NOTE: IRIs / definitions / all other annotation properties only need to be filled out for 1 row
-######## (B) conversion_file <- create_conversion(variable_map)
+######## (B) conversion <- create_conversion(varMap)
 
 
 
@@ -61,6 +61,55 @@ create_conversion <- function(varMap_file) {
     conversion <- rbind(conversion, temp)
     rm(temp)
   }
+  
+  if (length(unique(conversion$dataSet[conversion$dataSet != "" & !is.na(conversion$dataSet)]))==1){
+    conversion$dataSet <- unique(conversion$dataSet[conversion$dataSet != "" & !is.na(conversion$dataSet)])
+  }
+
+  # add rows for parent categories
+  
+  categories <- conversion[1:length(unique(conversion$parentLabel)),]
+  for(i in names(categories)){
+    categories[,names(categories)==i] <- ""
+  }
+  
+  categories$label <- unique(conversion$parentLabel)
+  categories$dataSet <- paste(unique(conversion$dataSet), collapse=" | ")
+  categories$termType <- "category"
+  
+  for(i in unique(categories$label)){
+    categories$IRI[categories$label==i] <- paste(unique(conversion$parentIRI[conversion$parentLabel==i]), collapse=" | ")
+    categories$category[categories$label==i] <- paste(unique(conversion$category[conversion$parentLabel==i]), collapse=" | ")
+  }
+  
+  conversion <- rbind(categories, conversion)
+  rm(categories)
+  
+  entities <- conversion[1:length(unique(conversion$category[conversion$category %in% conversion$category[grep("[|]", conversion$category)]==F])),]
+  for(i in names(entities)){
+    entities[,names(entities)==i] <- ""
+  }
+  
+  entities$label <- unique(unique(conversion$category[conversion$category %in% conversion$category[grep("[|]", conversion$category)]==F]))
+  entities$dataSet <- paste(unique(conversion$dataSet), collapse=" | ")
+  entities$termType <- "category"
+  entities$category <- entities$label
+  
+  entities$IRI[entities$label=="Community"] <- "http://purl.obolibrary.org/obo/EUPATH_0035127"
+  entities$IRI[entities$label=="Household"] <- "http://purl.obolibrary.org/obo/PCO_0000024"
+  entities$IRI[entities$label=="Participant"] <- "http://purl.obolibrary.org/obo/EUPATH_0000096"
+  entities$IRI[entities$label=="Sample"] <- "http://purl.obolibrary.org/obo/EUPATH_0000609"
+  
+  for(i in unique(conversion$label)){
+    if(i %in% entities$label){
+      conversion <- conversion[conversion$label !=i,]
+    }
+  }
+  
+  conversion <- rbind(entities, conversion)
+  rm(entities)
+  
+  row.names(conversion) <- 1:nrow(conversion)
   
   return(conversion)
 }
