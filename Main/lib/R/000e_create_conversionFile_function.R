@@ -12,6 +12,15 @@
 ######## ######### NOTE: IRIs / definitions / all other annotation properties only need to be filled out for 1 row
 ######## (B) conversion <- create_conversion(varMap)
 
+# AFTER CREATING THE CONVERSION FILE: Things that will need updating after running the script to make the conversion file:
+######## (A) termType = “category” for all parent category rows… update to “multifilter” as needed
+######## (B) Only the entities and immediate parent categories are added as rows. 
+######## ######## If there is additional structure (ie, another category between the immediate parent category and the 
+######## ######## entity), this will need to be manually added 
+######## (C) any differences in annotation properties will be separated with a pipe. 
+######## ######## after creating the conversion file with the script, open it in excel and use conditional highlighting
+######## ######## to find every cell with a pipe and correct annotation properties as necessary
+
 
 
 create_conversion <- function(varMap_file) {
