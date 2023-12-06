@@ -16,7 +16,6 @@
   <step name="initDIYUserGroupProject" 
 	stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InitDIYUserGroupProject">
   </step>
-
  <subgraph name="Ontology_Relationship_Types_RSRC" xmlFile="loadDataset.xml">
     <paramValue name="datasetName">Ontology_Relationship_Types_RSRC</paramValue>
     <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
@@ -24,6 +23,7 @@
     <depends name="initUserGroupProject"/>
   </subgraph>
 
+<!--
   <subgraph name="EuPath_Ontology_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
     <paramValue name="datasetName">OntologyTerm_EuPath_RSRC</paramValue>
     <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
@@ -37,7 +37,7 @@
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <depends name="EuPath_Ontology_RSRC"/>
   </subgraph>
-
+-->
   <subgraph name="Ontology_entityTypesAndProtocols_RSRC" xmlFile="loadDataset.xml" stepLoadTypes="runPlugin:insertOntologyTermsAndRelationships">
     <paramValue name="datasetName">Ontology_entityTypesAndProtocols_RSRC</paramValue>
     <paramValue name="datasetLoaderXmlFileName">$$globalDatasetLoaderXmlFile$$</paramValue>
