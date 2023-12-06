@@ -1,9 +1,10 @@
 <workflowGraph name="">
   <param name="projectName"/>
   <param name="parentDataDir"/>
+  <param name="projectVersionForWebsiteFiles"/>
   <constant name="dataDir">${parentDataDir}/edaStudies</constant>
 
-  <constant name="relativeWebServicesDir">webServices/$$projectName$$/release-$$projectVersionForWebsiteFiles$$</constant>
+  <constant name="relativeWebServicesDir">webServices</constant>
   <constant name="relativeDownloadSiteDir">downloadSite/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
   <constant name="relativeAuxiliaryDir">auxiliary/$$projectName$$/release-$$projectVersionForWebsiteFiles$$/</constant>
 
@@ -61,6 +62,9 @@
       <paramValue name="studyClassificationsYaml">lib/yaml/ClinEpiDB.yaml</paramValue>
       <paramValue name="studyClassificationsOwl">ontology/release/production/classifications.owl</paramValue>
       <paramValue name="downloadFileBaseName">${groupName}_${studyName}</paramValue> 
+      <paramValue name="nameForFilenames">${nameForFilenames}</paramValue>
+      <paramValue name="relativeDownloadSiteDir">$$relativeDownloadSiteDir$$</paramValue>
+      <paramValue name="relativeWebServicesDir">$$relativeWebServicesDir$$</paramValue>
       <depends name="makeDataDir"/>
       <!-- dependsGlobal name="Ontology_entityTypesAndProtocols_RSRC"/ -->
     </subgraph>
@@ -78,6 +82,12 @@
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
     </step>
 -->
+    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC.copyEntityWebServicesFiles" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyToStaging">
+      <paramValue name="filePath">$$dataDir$$/ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC/annPropsAndArtifacts/results/study_*</paramValue>
+      <paramValue name="relativeDownloadSiteDir">$$relativeWebServicesDir$$</paramValue>
+      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
+    </step>
+
 
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_copyEntityDownloadFiles" 
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyShinyFilesToDownloadDir">
@@ -110,9 +120,6 @@
       <paramValue name="version">${version}</paramValue>
       <paramValue name="datasetLoaderXmlFileName">${projectName}.xml</paramValue>
       <paramValue name="parentDataDir"></paramValue>
-<!--
-      <dependsGlobal name="EuPath_Ontology_RSRC"/>
--->
     </subgraph>
 
     <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadPreviewStudy" 
@@ -128,30 +135,13 @@
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_studyCharacteristics"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudyCharacteristics">
       <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="file">$GUS_HOME/ontology/General/study_classifications/ini</paramValue>
-      <paramValue name="owlFile">$GUS_HOME/ontology/release/production/classifications.owl</paramValue>
+      <paramValue name="file">lib/yaml/ClinEpiDB.yaml</paramValue>
+      <paramValue name="owlFile">ontology/release/production/classifications.owl</paramValue>
       <paramValue name="commit">1</paramValue>
       <paramValue name="schema">EDA</paramValue>
       <depends name="OntologyTerm_classifications_RSRC"/>
       <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_loadPreviewStudy"/>
     </step>
-
-<!-- deprecated in EDA
-    <step name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC_insertStudy" stepClass="ApiCommonWorkflow::Main::WorkflowSteps::InsertStudy" stepLoadTypes="plugin">
-      <paramValue name="experimentName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="experimentExtDbRlsSpec">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC|${version}</paramValue>
-      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
-    </step>
-    <step name="${subProjectName}_${groupName}_${studyName}_RSRC_tuning"
-          stepClass="ApiCommonWorkflow::Main::WorkflowSteps::MakeDatasetSpecificDerivedTables" stepLoadTypes="tuningManager">
-      <paramValue name="datasetName">ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC</paramValue>
-      <paramValue name="file">$GUS_HOME/ontology/General/study_classifications/ini</paramValue>
-      <paramValue name="owlFile">$GUS_HOME/ontology/release/production/classifications.owl</paramValue>
-      <paramValue name="commit">1</paramValue>
-      <depends name="OntologyTerm_classifications_RSRC"/>
-      <depends name="ISASimple_${subProjectName}_${groupName}_${studyName}_RSRC"/>
-    </step>
---> 
 
     <step name="${subProjectName}_${groupName}_${studyName}_RSRC_manualDownloadFiles"
           stepClass="ApiCommonWorkflow::Main::WorkflowSteps::CopyDownloadFilesDirFromManualDelivery">
